@@ -18,7 +18,8 @@ namespace osu.Desktop.Tests
 {
     class TestCaseTextAwesome : TestCase
     {
-        public override string Name => @"TextAwesome";
+        // adding osu-icon to name to force load the osu-font texture early
+        public override string Name => @"TextAwesome " + ((char)FontAwesome.fa_osu_osu_o);
 
         public override string Description => @"Tests display of icons";
 

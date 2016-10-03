@@ -3,12 +3,14 @@
 
 using osu.Framework.GameModes.Testing;
 using osu.Game.GameModes.Menu;
+using osu.Game.Graphics;
 
 namespace osu.Desktop.Tests
 {
     class TestCaseMenuButtonSystem : TestCase
     {
-        public override string Name => @"ButtonSystem";
+        // adding some FontAwesome-icons to name to force-load the FontAwesome textures early
+        public override string Name => @"ButtonSystem " + ((char)FontAwesome.gear) + ((char)FontAwesome.user) + ((char)FontAwesome.users) + ((char)FontAwesome.terminal);
         public override string Description => @"Main menu button system";
 
         public override void Reset()
