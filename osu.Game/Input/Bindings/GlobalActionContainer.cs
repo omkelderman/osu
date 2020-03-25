@@ -21,7 +21,7 @@ namespace osu.Game.Input.Bindings
                 handler = game;
         }
 
-        public override IEnumerable<KeyBinding> DefaultKeyBindings => GlobalKeyBindings.Concat(InGameKeyBindings).Concat(AudioControlKeyBindings);
+        public override IEnumerable<KeyBinding> DefaultKeyBindings => GlobalKeyBindings.Concat(InGameKeyBindings).Concat(AudioControlKeyBindings).Concat(TourneyKeyBindings);
 
         public IEnumerable<KeyBinding> GlobalKeyBindings => new[]
         {
@@ -71,6 +71,19 @@ namespace osu.Game.Input.Bindings
             new KeyBinding(InputKey.F5, GlobalAction.MusicNext),
             new KeyBinding(InputKey.PlayPause, GlobalAction.MusicPlay),
             new KeyBinding(InputKey.F3, GlobalAction.MusicPlay)
+        };
+
+        public IEnumerable<KeyBinding> TourneyKeyBindings => new[]
+        {
+            new KeyBinding(new[] { InputKey.Control, InputKey.Alt, InputKey.Number1 }, GlobalAction.SelectTourneySchedule),
+            new KeyBinding(new[] { InputKey.Control, InputKey.Alt, InputKey.Number2 }, GlobalAction.SelectTourneyBracket),
+            new KeyBinding(new[] { InputKey.Control, InputKey.Alt, InputKey.Number3 }, GlobalAction.SelectTourneyTeamIntro),
+            new KeyBinding(new[] { InputKey.Control, InputKey.Alt, InputKey.Number4 }, GlobalAction.SelectTourneySeeding),
+            new KeyBinding(new[] { InputKey.Control, InputKey.Alt, InputKey.Number5 }, GlobalAction.SelectTourneyMapPool),
+            new KeyBinding(new[] { InputKey.Control, InputKey.Alt, InputKey.Number6 }, GlobalAction.SelectTourneyGamePlay),
+            new KeyBinding(new[] { InputKey.Control, InputKey.Alt, InputKey.Number7 }, GlobalAction.SelectTourneyWin),
+            new KeyBinding(new[] { InputKey.Control, InputKey.Alt, InputKey.Number8 }, GlobalAction.SelectTourneyDrawings),
+            new KeyBinding(new[] { InputKey.Control, InputKey.Alt, InputKey.Number9 }, GlobalAction.SelectTourneyShowcase),
         };
 
         protected override IEnumerable<Drawable> KeyBindingInputQueue =>
@@ -152,5 +165,16 @@ namespace osu.Game.Input.Bindings
 
         [Description("Next Selection")]
         SelectNext,
+
+        // tourney client
+        SelectTourneySchedule,
+        SelectTourneyBracket,
+        SelectTourneyTeamIntro,
+        SelectTourneySeeding,
+        SelectTourneyMapPool,
+        SelectTourneyGamePlay,
+        SelectTourneyWin,
+        SelectTourneyDrawings,
+        SelectTourneyShowcase,
     }
 }
