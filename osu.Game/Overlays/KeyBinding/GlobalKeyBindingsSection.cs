@@ -17,6 +17,7 @@ namespace osu.Game.Overlays.KeyBinding
             Add(new DefaultBindingsSubsection(manager));
             Add(new AudioControlKeyBindingsSubsection(manager));
             Add(new InGameKeyBindingsSubsection(manager));
+            Add(new TourneyKeyBindingsSubsection(manager));
         }
 
         private class DefaultBindingsSubsection : KeyBindingsSubsection
@@ -49,6 +50,17 @@ namespace osu.Game.Overlays.KeyBinding
                 : base(null)
             {
                 Defaults = manager.AudioControlKeyBindings;
+            }
+        }
+
+        private class TourneyKeyBindingsSubsection : KeyBindingsSubsection
+        {
+            protected override string Header => "Tourney Client";
+
+            public TourneyKeyBindingsSubsection(GlobalActionContainer manager)
+                : base(null)
+            {
+                Defaults = manager.TourneyKeyBindings;
             }
         }
     }

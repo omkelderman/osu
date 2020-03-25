@@ -167,14 +167,31 @@ namespace osu.Game.Input.Bindings
         SelectNext,
 
         // tourney client
+        [Description("Switch to Schedule scene")]
         SelectTourneySchedule,
+
+        [Description("Switch to Bracket scene")]
         SelectTourneyBracket,
+
+        [Description("Switch to TeamIntro scene")]
         SelectTourneyTeamIntro,
+
+        [Description("Switch to Seeding scene")]
         SelectTourneySeeding,
+
+        [Description("Switch to MapPool scene")]
         SelectTourneyMapPool,
+
+        [Description("Switch to Gameplay scene")]
         SelectTourneyGamePlay,
+
+        [Description("Switch to Win scene")]
         SelectTourneyWin,
+
+        [Description("Switch to Drawings scene")]
         SelectTourneyDrawings,
+
+        [Description("Switch to Showcase scene")]
         SelectTourneyShowcase,
     }
 }
