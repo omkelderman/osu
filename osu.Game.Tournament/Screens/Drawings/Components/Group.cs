@@ -28,7 +28,7 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
         {
             GroupName = name;
 
-            Size = new Vector2(176, 128);
+            Size = new Vector2(154, 128);
 
             Masking = true;
             CornerRadius = 4;
@@ -56,7 +56,7 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
                 {
                     RelativeSizeAxes = Axes.Both,
 
-                    Spacing = new Vector2(6f, 22),
+                    Spacing = new Vector2(6f, 6f),
 
                     Margin = new MarginPadding
                     {

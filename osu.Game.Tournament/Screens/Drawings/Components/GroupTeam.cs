@@ -17,16 +17,17 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
         public GroupTeam(TournamentTeam team)
             : base(team)
         {
-            Width = 36;
+            Width = 132;
             AutoSizeAxes = Axes.Y;
 
-            Flag.Anchor = Anchor.TopCentre;
-            Flag.Origin = Anchor.TopCentre;
+            Flag.Anchor = Anchor.TopLeft;
+            Flag.Origin = Anchor.TopLeft;
 
-            AcronymText.Anchor = Anchor.TopCentre;
-            AcronymText.Origin = Anchor.TopCentre;
-            AcronymText.Text = team.Acronym.Value.ToUpperInvariant();
-            AcronymText.Font = OsuFont.Torus.With(weight: FontWeight.Bold, size: 10);
+            AcronymText.Anchor = Anchor.TopLeft;
+            AcronymText.Origin = Anchor.TopLeft;
+            AcronymText.Text = team.Acronym.Value;
+            AcronymText.Font = OsuFont.Torus.With(weight: FontWeight.Bold, size: 14);
+            AcronymText.Margin = new MarginPadding(3f);
 
             InternalChildren = new Drawable[]
             {
@@ -38,8 +39,8 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
                     RelativeSizeAxes = Axes.X,
                     AutoSizeAxes = Axes.Y,
 
-                    Direction = FillDirection.Vertical,
-                    Spacing = new Vector2(0, 5f),
+                    Direction = FillDirection.Horizontal,
+                    Spacing = new Vector2(0, 0),
 
                     Children = new Drawable[]
                     {

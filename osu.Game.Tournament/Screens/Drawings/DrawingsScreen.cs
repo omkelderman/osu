@@ -113,7 +113,7 @@ namespace osu.Game.Tournament.Screens.Drawings
                             Anchor = Anchor.Centre,
                             Origin = Anchor.TopCentre,
 
-                            Position = new Vector2(0, 45f),
+                            Position = new Vector2(0, 30f),
 
                             Colour = OsuColour.Gray(0.95f),
 

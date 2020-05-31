@@ -21,8 +21,10 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
 
         public GroupContainer(int numGroups, int teamsPerGroup)
         {
-            FlowContainer<Group> bottomGroups;
-            FlowContainer<Group> topGroups;
+            FlowContainer<Group> topTopGroups;
+            FlowContainer<Group> topBottomGroups;
+            FlowContainer<Group> bottomTopGroups;
+            FlowContainer<Group> bottomBottomGroups;
 
             maxTeams = teamsPerGroup;
 
@@ -30,25 +32,55 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
 
             Children = new[]
             {
-                topGroups = new FillFlowContainer<Group>
+                new FillFlowContainer
                 {
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
-
                     AutoSizeAxes = Axes.Both,
+                    Spacing = new Vector2(0, 7f),
+                    Direction = FillDirection.Vertical,
 
-                    Spacing = new Vector2(7f, 0)
+                    Children = new[]
+                    {
+                        topTopGroups = new FillFlowContainer<Group>()
+                        {
+                            AutoSizeAxes = Axes.Both,
+                            Spacing = new Vector2(7f, 0)
+                        },
+                        topBottomGroups = new FillFlowContainer<Group>()
+                        {
+                            AutoSizeAxes = Axes.Both,
+                            Spacing = new Vector2(7f, 0)
+                        }
+                    }
                 },
-                bottomGroups = new FillFlowContainer<Group>
+                new FillFlowContainer
                 {
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.BottomCentre,
-
                     AutoSizeAxes = Axes.Both,
+                    Spacing = new Vector2(0, 7f),
+                    Direction = FillDirection.Vertical,
 
-                    Spacing = new Vector2(7f, 0)
+                    Children = new[]
+                    {
+                        bottomTopGroups = new FillFlowContainer<Group>()
+                        {
+                            AutoSizeAxes = Axes.Both,
+                            Spacing = new Vector2(7f, 0)
+                        },
+                        bottomBottomGroups = new FillFlowContainer<Group>()
+                        {
+                            AutoSizeAxes = Axes.Both,
+                            Spacing = new Vector2(7f, 0)
+                        }
+                    }
                 }
             };
+
+            int quarterNumGroups = (int)Math.Ceiling(numGroups / 4f);
+            int halfNumGroups = quarterNumGroups + quarterNumGroups;
+            int threeQuarterNumGroups = quarterNumGroups + halfNumGroups;
 
             for (int i = 0; i < numGroups; i++)
             {
@@ -57,10 +89,22 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
                 groups.Add(g);
                 nextGroupName++;
 
-                if (i < (int)MathF.Ceiling(numGroups / 2f))
-                    topGroups.Add(g);
+                if (i < quarterNumGroups)
+                {
+                    topTopGroups.Add(g);
+                }
+                else if (i < halfNumGroups)
+                {
+                    topBottomGroups.Add(g);
+                }
+                else if (i < threeQuarterNumGroups)
+                {
+                    bottomTopGroups.Add(g);
+                }
                 else
-                    bottomGroups.Add(g);
+                {
+                    bottomBottomGroups.Add(g);
+                }
             }
         }
 
