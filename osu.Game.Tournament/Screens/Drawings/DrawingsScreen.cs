@@ -56,6 +56,7 @@ namespace osu.Game.Tournament.Screens.Drawings
 
             drawingsConfig = new DrawingsConfigManager(storage);
 
+            var teamsPerGroup = drawingsConfig.Get<int>(DrawingsConfig.TeamsPerGroup);
             InternalChildren = new Drawable[]
             {
                 // Main container
@@ -84,7 +85,7 @@ namespace osu.Game.Tournament.Screens.Drawings
                             Lines = 6
                         },
                         // Groups
-                        groupsContainer = new GroupContainer(drawingsConfig.Get<int>(DrawingsConfig.Groups), drawingsConfig.Get<int>(DrawingsConfig.TeamsPerGroup))
+                        groupsContainer = new GroupContainer(drawingsConfig.Get<int>(DrawingsConfig.Groups), teamsPerGroup)
                         {
                             Anchor = Anchor.TopCentre,
                             Origin = Anchor.TopCentre,
@@ -112,7 +113,7 @@ namespace osu.Game.Tournament.Screens.Drawings
                             Anchor = Anchor.Centre,
                             Origin = Anchor.TopCentre,
 
-                            Position = new Vector2(0, 45f),
+                            Position = new Vector2(0, 40f),
 
                             Colour = OsuColour.Gray(0.95f),
 
@@ -153,6 +154,13 @@ namespace osu.Game.Tournament.Screens.Drawings
 
                         Text = "Reset",
                         Action = () => reset()
+                    },
+                    new TourneyButton
+                    {
+                        RelativeSizeAxes = Axes.X,
+
+                        Text = "Test",
+                        Action = () => teamsContainer.Test(teamsPerGroup)
                     }
                 }
             };
