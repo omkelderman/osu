@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -65,12 +66,12 @@ namespace osu.Game.Tournament.Screens.Drawings
                     RelativeSizeAxes = Axes.Both,
                     Children = new Drawable[]
                     {
-                        new Sprite
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            FillMode = FillMode.Fill,
-                            Texture = textures.Get(@"Backgrounds/Drawings/background.png")
-                        },
+                        //new Sprite
+                        //{
+                        //    RelativeSizeAxes = Axes.Both,
+                        //    FillMode = FillMode.Fill,
+                        //    Texture = textures.Get(@"Backgrounds/Drawings/background.png")
+                        //},
                         // Visualiser
                         new VisualiserContainer
                         {
@@ -115,7 +116,8 @@ namespace osu.Game.Tournament.Screens.Drawings
 
                             Position = new Vector2(0, 40f),
 
-                            Colour = OsuColour.Gray(0.95f),
+                            //Colour = OsuColour.Gray(0.95f),
+                            Colour = Color4Extensions.FromHex("#00c0b9"),
 
                             Alpha = 0,
 
