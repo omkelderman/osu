@@ -94,7 +94,7 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
                 }
             };
 
-            int nextGroupName = 1;
+            char nextGroupName = 'A';
             for (int i = 0; i < numGroups; i++)
             {
                 Group g = new Group(nextGroupName.ToString());

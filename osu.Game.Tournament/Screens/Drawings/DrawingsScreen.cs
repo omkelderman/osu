@@ -116,8 +116,7 @@ namespace osu.Game.Tournament.Screens.Drawings
 
                             Position = new Vector2(0, 40f),
 
-                            //Colour = OsuColour.Gray(0.95f),
-                            Colour = Color4Extensions.FromHex("#00c0b9"),
+                            Colour = OsuColour.Gray(0.95f),
 
                             Alpha = 0,
 

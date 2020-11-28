@@ -20,7 +20,7 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
 
         private const int group_team_spacing_x = 6;
         private const int group_team_margin_x = 7;
-        private const int group_team_count_x = 4;
+        private const int group_team_count_x = 2;
         private const int width = (group_team_count_x * GroupTeam.WIDTH) + ((group_team_count_x - 1) * group_team_spacing_x) + (2 * group_team_margin_x);
         public readonly string GroupName;
 
@@ -54,7 +54,7 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
 
                     Position = new Vector2(0, 7f),
 
-                    Text = $"TEAM {name.ToUpperInvariant()}",
+                    Text = $"GROUP {name.ToUpperInvariant()}",
                     Font = OsuFont.Torus.With(weight: FontWeight.Bold, size: 8),
                     Colour = new Color4(255, 204, 34, 255),
                 },
