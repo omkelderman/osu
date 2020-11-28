@@ -19,7 +19,7 @@ using osu.Game.Skinning;
 
 namespace osu.Game.Rulesets.Osu.Objects.Drawables
 {
-    public class DrawableSlider : DrawableOsuHitObject, IDrawableHitObjectWithProxiedApproach
+    public class DrawableSlider : DrawableOsuHitObject
     {
         public new Slider HitObject => (Slider)base.HitObject;
 
@@ -80,23 +80,24 @@ namespace osu.Game.Rulesets.Osu.Objects.Drawables
             {
                 foreach (var drawableHitObject in NestedHitObjects)
                     drawableHitObject.AccentColour.Value = colour.NewValue;
+                updateBallTint();
             }, true);
 
             Tracking.BindValueChanged(updateSlidingSample);
         }
 
-        protected override void OnApply(HitObject hitObject)
+        protected override void OnApply()
         {
-            base.OnApply(hitObject);
+            base.OnApply();
 
             // Ensure that the version will change after the upcoming BindTo().
             pathVersion.Value = int.MaxValue;
             PathVersion.BindTo(HitObject.Path.Version);
         }
 
-        protected override void OnFree(HitObject hitObject)
+        protected override void OnFree()
         {
-            base.OnFree(hitObject);
+            base.OnFree();
 
             PathVersion.UnbindFrom(HitObject.Path.Version);
         }
@@ -192,13 +193,6 @@ namespace osu.Game.Rulesets.Osu.Objects.Drawables
             return base.CreateNestedHitObject(hitObject);
         }
 
-        protected override void UpdateInitialTransforms()
-        {
-            base.UpdateInitialTransforms();
-
-            Body.FadeInFromZero(HitObject.TimeFadeIn);
-        }
-
         public readonly Bindable<bool> Tracking = new Bindable<bool>();
 
         protected override void Update()
@@ -244,7 +238,15 @@ namespace osu.Game.Rulesets.Osu.Objects.Drawables
         {
             base.ApplySkin(skin, allowFallback);
 
-            bool allowBallTint = skin.GetConfig<OsuSkinConfiguration, bool>(OsuSkinConfiguration.AllowSliderBallTint)?.Value ?? false;
+            updateBallTint();
+        }
+
+        private void updateBallTint()
+        {
+            if (CurrentSkin == null)
+                return;
+
+            bool allowBallTint = CurrentSkin.GetConfig<OsuSkinConfiguration, bool>(OsuSkinConfiguration.AllowSliderBallTint)?.Value ?? false;
             Ball.AccentColour = allowBallTint ? AccentColour.Value : Color4.White;
         }
 
@@ -262,6 +264,13 @@ namespace osu.Game.Rulesets.Osu.Objects.Drawables
             // this can only be done after we stop using LegacyLastTick.
             if (TailCircle.IsHit)
                 base.PlaySamples();
+        }
+
+        protected override void UpdateInitialTransforms()
+        {
+            base.UpdateInitialTransforms();
+
+            Body.FadeInFromZero(HitObject.TimeFadeIn);
         }
 
         protected override void UpdateStartTimeStateTransforms()
@@ -288,7 +297,7 @@ namespace osu.Game.Rulesets.Osu.Objects.Drawables
                     break;
             }
 
-            this.FadeOut(fade_out_time, Easing.OutQuint);
+            this.FadeOut(fade_out_time, Easing.OutQuint).Expire();
         }
 
         public Drawable ProxiedLayer => HeadCircle.ProxiedLayer;

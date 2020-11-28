@@ -118,8 +118,7 @@ namespace osu.Game.Screens.Edit.Compose.Components
             }
         }
 
-        protected virtual Container<SelectionBlueprint> CreateSelectionBlueprintContainer() =>
-            new Container<SelectionBlueprint> { RelativeSizeAxes = Axes.Both };
+        protected virtual Container<SelectionBlueprint> CreateSelectionBlueprintContainer() => new HitObjectOrderedSelectionContainer { RelativeSizeAxes = Axes.Both };
 
         /// <summary>
         /// Creates a <see cref="Components.SelectionHandler"/> which outlines <see cref="DrawableHitObject"/>s and handles movement of selections.
@@ -188,7 +187,7 @@ namespace osu.Game.Screens.Edit.Compose.Components
             if (e.Button == MouseButton.Right)
                 return false;
 
-            if (movementBlueprint != null)
+            if (movementBlueprints != null)
             {
                 isDraggingBlueprint = true;
                 changeHandler?.BeginChange();
@@ -300,7 +299,7 @@ namespace osu.Game.Screens.Edit.Compose.Components
 
             SelectionBlueprints.Remove(blueprint);
 
-            if (movementBlueprint == blueprint)
+            if (movementBlueprints?.Contains(blueprint) == true)
                 finishSelectionMovement();
 
             OnBlueprintRemoved(hitObject);
@@ -338,12 +337,12 @@ namespace osu.Game.Screens.Edit.Compose.Components
         /// <returns>Whether a selection was performed.</returns>
         private bool beginClickSelection(MouseButtonEvent e)
         {
-            foreach (SelectionBlueprint blueprint in SelectionBlueprints.AliveChildren)
+            // Iterate from the top of the input stack (blueprints closest to the front of the screen first).
+            foreach (SelectionBlueprint blueprint in SelectionBlueprints.AliveChildren.Reverse())
             {
                 if (!blueprint.IsHovered) continue;
 
-                if (SelectionHandler.HandleSelectionRequested(blueprint, e))
-                    return clickSelectionBegan = true;
+                return clickSelectionBegan = SelectionHandler.HandleSelectionRequested(blueprint, e);
             }
 
             return false;
@@ -425,8 +424,8 @@ namespace osu.Game.Screens.Edit.Compose.Components
 
         #region Selection Movement
 
-        private Vector2? movementBlueprintOriginalPosition;
-        private SelectionBlueprint movementBlueprint;
+        private Vector2[] movementBlueprintOriginalPositions;
+        private SelectionBlueprint[] movementBlueprints;
         private bool isDraggingBlueprint;
 
         /// <summary>
@@ -443,8 +442,8 @@ namespace osu.Game.Screens.Edit.Compose.Components
                 return;
 
             // Movement is tracked from the blueprint of the earliest hitobject, since it only makes sense to distance snap from that hitobject
-            movementBlueprint = SelectionHandler.SelectedBlueprints.OrderBy(b => b.HitObject.StartTime).First();
-            movementBlueprintOriginalPosition = movementBlueprint.ScreenSpaceSelectionPoint; // todo: unsure if correct
+            movementBlueprints = SelectionHandler.SelectedBlueprints.OrderBy(b => b.HitObject.StartTime).ToArray();
+            movementBlueprintOriginalPositions = movementBlueprints.Select(m => m.ScreenSpaceSelectionPoint).ToArray();
         }
 
         /// <summary>
@@ -454,27 +453,47 @@ namespace osu.Game.Screens.Edit.Compose.Components
         /// <returns>Whether a movement was active.</returns>
         private bool moveCurrentSelection(DragEvent e)
         {
-            if (movementBlueprint == null)
+            if (movementBlueprints == null)
                 return false;
 
-            Debug.Assert(movementBlueprintOriginalPosition != null);
+            if (snapProvider == null)
+                return true;
 
-            HitObject draggedObject = movementBlueprint.HitObject;
+            Debug.Assert(movementBlueprintOriginalPositions != null);
+
+            Vector2 distanceTravelled = e.ScreenSpaceMousePosition - e.ScreenSpaceMouseDownPosition;
+
+            // check for positional snap for every object in selection (for things like object-object snapping)
+            for (var i = 0; i < movementBlueprintOriginalPositions.Length; i++)
+            {
+                var testPosition = movementBlueprintOriginalPositions[i] + distanceTravelled;
+
+                var positionalResult = snapProvider.SnapScreenSpacePositionToValidPosition(testPosition);
+
+                if (positionalResult.ScreenSpacePosition == testPosition) continue;
+
+                // attempt to move the objects, and abort any time based snapping if we can.
+                if (SelectionHandler.HandleMovement(new MoveSelectionEvent(movementBlueprints[i], positionalResult.ScreenSpacePosition)))
+                    return true;
+            }
+
+            // if no positional snapping could be performed, try unrestricted snapping from the earliest
+            // hitobject in the selection.
 
             // The final movement position, relative to movementBlueprintOriginalPosition.
-            Vector2 movePosition = movementBlueprintOriginalPosition.Value + e.ScreenSpaceMousePosition - e.ScreenSpaceMouseDownPosition;
+            Vector2 movePosition = movementBlueprintOriginalPositions.First() + distanceTravelled;
 
             // Retrieve a snapped position.
             var result = snapProvider.SnapScreenSpacePositionToValidTime(movePosition);
 
             // Move the hitobjects.
-            if (!SelectionHandler.HandleMovement(new MoveSelectionEvent(movementBlueprint, result.ScreenSpacePosition)))
+            if (!SelectionHandler.HandleMovement(new MoveSelectionEvent(movementBlueprints.First(), result.ScreenSpacePosition)))
                 return true;
 
             if (result.Time.HasValue)
             {
                 // Apply the start time at the newly snapped-to position
-                double offset = result.Time.Value - draggedObject.StartTime;
+                double offset = result.Time.Value - movementBlueprints.First().HitObject.StartTime;
 
                 foreach (HitObject obj in Beatmap.SelectedHitObjects)
                 {
@@ -492,11 +511,11 @@ namespace osu.Game.Screens.Edit.Compose.Components
         /// <returns>Whether a movement was active.</returns>
         private bool finishSelectionMovement()
         {
-            if (movementBlueprint == null)
+            if (movementBlueprints == null)
                 return false;
 
-            movementBlueprintOriginalPosition = null;
-            movementBlueprint = null;
+            movementBlueprintOriginalPositions = null;
+            movementBlueprints = null;
 
             return true;
         }

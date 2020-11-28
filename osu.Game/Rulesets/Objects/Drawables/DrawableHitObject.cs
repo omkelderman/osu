@@ -75,6 +75,11 @@ namespace osu.Game.Rulesets.Objects.Drawables
         public event Action<DrawableHitObject, JudgementResult> OnRevertResult;
 
         /// <summary>
+        /// Invoked when a new nested hit object is created by <see cref="CreateNestedHitObject" />.
+        /// </summary>
+        internal event Action<DrawableHitObject> OnNestedDrawableCreated;
+
+        /// <summary>
         /// Whether a visual indicator should be displayed when a scoring result occurs.
         /// </summary>
         public virtual bool DisplayResult => true;
@@ -123,6 +128,12 @@ namespace osu.Game.Rulesets.Objects.Drawables
 
         private readonly Bindable<ArmedState> state = new Bindable<ArmedState>();
 
+        /// <summary>
+        /// The state of this <see cref="DrawableHitObject"/>.
+        /// </summary>
+        /// <remarks>
+        /// For pooled hitobjects, <see cref="ApplyCustomUpdateState"/> is recommended to be used instead for better editor/rewinding support.
+        /// </remarks>
         public IBindable<ArmedState> State => state;
 
         /// <summary>
@@ -140,6 +151,11 @@ namespace osu.Game.Rulesets.Objects.Drawables
         private IPooledHitObjectProvider pooledObjectProvider { get; set; }
 
         private Container<PausableSkinnableSound> samplesContainer;
+
+        /// <summary>
+        /// Whether the initialization logic in <see cref="Playfield" /> has applied.
+        /// </summary>
+        internal bool IsInitialized;
 
         /// <summary>
         /// Creates a new <see cref="DrawableHitObject"/>.
@@ -201,6 +217,8 @@ namespace osu.Game.Rulesets.Objects.Drawables
                 // Copy any existing result from the entry (required for rewind / judgement revert).
                 Result = lifetimeEntry.Result;
             }
+            else
+                LifetimeStart = HitObject.StartTime - InitialLifetimeOffset;
 
             // Ensure this DHO has a result.
             Result ??= CreateResult(HitObject.CreateJudgement())
@@ -212,9 +230,14 @@ namespace osu.Game.Rulesets.Objects.Drawables
 
             foreach (var h in HitObject.NestedHitObjects)
             {
-                var drawableNested = pooledObjectProvider?.GetPooledDrawableRepresentation(h)
+                var pooledDrawableNested = pooledObjectProvider?.GetPooledDrawableRepresentation(h);
+                var drawableNested = pooledDrawableNested
                                      ?? CreateNestedHitObject(h)
                                      ?? throw new InvalidOperationException($"{nameof(CreateNestedHitObject)} returned null for {h.GetType().ReadableName()}.");
+
+                // Invoke the event only if this nested object is just created by `CreateNestedHitObject`.
+                if (pooledDrawableNested == null)
+                    OnNestedDrawableCreated?.Invoke(drawableNested);
 
                 drawableNested.OnNewResult += onNewResult;
                 drawableNested.OnRevertResult += onRevertResult;
@@ -237,12 +260,22 @@ namespace osu.Game.Rulesets.Objects.Drawables
 
             HitObject.DefaultsApplied += onDefaultsApplied;
 
-            OnApply(hitObject);
+            OnApply();
             HitObjectApplied?.Invoke(this);
 
             // If not loaded, the state update happens in LoadComplete(). Otherwise, the update is scheduled to allow for lifetime updates.
             if (IsLoaded)
-                Schedule(() => updateState(ArmedState.Idle, true));
+            {
+                Scheduler.Add(() =>
+                {
+                    if (Result.IsHit)
+                        updateState(ArmedState.Hit, true);
+                    else if (Result.HasResult)
+                        updateState(ArmedState.Miss, true);
+                    else
+                        updateState(ArmedState.Idle, true);
+                });
+            }
 
             hasHitObjectApplied = true;
         }
@@ -282,10 +315,13 @@ namespace osu.Game.Rulesets.Objects.Drawables
 
             HitObject.DefaultsApplied -= onDefaultsApplied;
 
-            OnFree(HitObject);
+            OnFree();
 
             HitObject = null;
+            Result = null;
             lifetimeEntry = null;
+
+            clearExistingStateTransforms();
 
             hasHitObjectApplied = false;
         }
@@ -304,16 +340,14 @@ namespace osu.Game.Rulesets.Objects.Drawables
         /// <summary>
         /// Invoked for this <see cref="DrawableHitObject"/> to take on any values from a newly-applied <see cref="HitObject"/>.
         /// </summary>
-        /// <param name="hitObject">The <see cref="HitObject"/> being applied.</param>
-        protected virtual void OnApply(HitObject hitObject)
+        protected virtual void OnApply()
         {
         }
 
         /// <summary>
         /// Invoked for this <see cref="DrawableHitObject"/> to revert any values previously taken on from the currently-applied <see cref="HitObject"/>.
         /// </summary>
-        /// <param name="hitObject">The currently-applied <see cref="HitObject"/>.</param>
-        protected virtual void OnFree(HitObject hitObject)
+        protected virtual void OnFree()
         {
         }
 
@@ -403,8 +437,7 @@ namespace osu.Game.Rulesets.Objects.Drawables
 
             double transformTime = HitObject.StartTime - InitialLifetimeOffset;
 
-            base.ApplyTransformsAt(double.MinValue, true);
-            base.ClearTransformsAfter(double.MinValue, true);
+            clearExistingStateTransforms();
 
             using (BeginAbsoluteSequence(transformTime, true))
                 UpdateInitialTransforms();
@@ -430,6 +463,14 @@ namespace osu.Game.Rulesets.Objects.Drawables
 
             if (!force && newState == ArmedState.Hit)
                 PlaySamples();
+        }
+
+        private void clearExistingStateTransforms()
+        {
+            base.ApplyTransformsAt(double.MinValue, true);
+
+            // has to call this method directly (not ClearTransforms) to bypass the local ClearTransformsAfter override.
+            base.ClearTransformsAfter(double.MinValue, true);
         }
 
         /// <summary>
@@ -502,11 +543,10 @@ namespace osu.Game.Rulesets.Objects.Drawables
 
         private void updateComboColour()
         {
-            if (!(HitObject is IHasComboInformation)) return;
+            if (!(HitObject is IHasComboInformation combo)) return;
 
-            var comboColours = CurrentSkin.GetConfig<GlobalSkinColours, IReadOnlyList<Color4>>(GlobalSkinColours.ComboColours)?.Value;
-
-            AccentColour.Value = GetComboColour(comboColours);
+            var comboColours = CurrentSkin.GetConfig<GlobalSkinColours, IReadOnlyList<Color4>>(GlobalSkinColours.ComboColours)?.Value ?? Array.Empty<Color4>();
+            AccentColour.Value = combo.GetComboColour(comboColours);
         }
 
         /// <summary>
@@ -517,6 +557,7 @@ namespace osu.Game.Rulesets.Objects.Drawables
         /// This will only be called if the <see cref="HitObject"/> implements <see cref="IHasComboInformation"/>.
         /// </remarks>
         /// <param name="comboColours">A list of combo colours provided by the beatmap or skin. Can be null if not available.</param>
+        [Obsolete("Unused. Implement IHasComboInformation and IHasComboInformation.GetComboColour() on the HitObject model instead.")] // Can be removed 20210527
         protected virtual Color4 GetComboColour(IReadOnlyList<Color4> comboColours)
         {
             if (!(HitObject is IHasComboInformation combo))
@@ -638,6 +679,10 @@ namespace osu.Game.Rulesets.Objects.Drawables
         /// This is only used as an optimisation to delay the initial update of this <see cref="DrawableHitObject"/> and may be tuned more aggressively if required.
         /// It is indirectly used to decide the automatic transform offset provided to <see cref="UpdateInitialTransforms"/>.
         /// A more accurate <see cref="LifetimeStart"/> should be set for further optimisation (in <see cref="LoadComplete"/>, for example).
+        /// <para>
+        /// Only has an effect if this <see cref="DrawableHitObject"/> is not being pooled.
+        /// For pooled <see cref="DrawableHitObject"/>s, use <see cref="HitObjectLifetimeEntry.InitialLifetimeOffset"/> instead.
+        /// </para>
         /// </remarks>
         protected virtual double InitialLifetimeOffset => 10000;
 
