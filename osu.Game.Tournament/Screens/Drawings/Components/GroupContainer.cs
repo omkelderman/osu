@@ -9,6 +9,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Tournament.Models;
 using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Tournament.Screens.Drawings.Components
 {
@@ -19,7 +20,7 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
         private readonly int maxTeams;
         private int currentGroup;
 
-        public GroupContainer(int numGroups, int teamsPerGroup)
+        public GroupContainer(int numGroups, int teamsPerGroup, Color4 boxBackgroundColour, Color4 boxHeaderColour, Color4? teamTextColour)
         {
             FlowContainer<Group> topTopGroups;
             FlowContainer<Group> bottomTopGroups;
@@ -97,7 +98,7 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
             char nextGroupName = 'A';
             for (int i = 0; i < numGroups; i++)
             {
-                Group g = new Group(nextGroupName.ToString());
+                Group g = new Group(nextGroupName.ToString(), boxBackgroundColour, boxHeaderColour, teamTextColour);
 
                 groups.Add(g);
                 nextGroupName++;

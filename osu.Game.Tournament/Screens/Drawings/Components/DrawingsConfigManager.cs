@@ -14,6 +14,11 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
         {
             Set(DrawingsConfig.Groups, 8, 1, 16);
             Set(DrawingsConfig.TeamsPerGroup, 4, 1, 4);
+            Set(DrawingsConfig.ShowWorldMap, true);
+            Set(DrawingsConfig.PickedTeamColour, string.Empty);
+            Set(DrawingsConfig.GroupBoxBackgroundColour, string.Empty);
+            Set(DrawingsConfig.GroupBoxHeaderColour, string.Empty);
+            Set(DrawingsConfig.GroupBoxTeamColor, string.Empty);
         }
 
         public DrawingsConfigManager(Storage storage)
@@ -25,6 +30,11 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
     public enum DrawingsConfig
     {
         Groups,
-        TeamsPerGroup
+        TeamsPerGroup,
+        ShowWorldMap,
+        PickedTeamColour,
+        GroupBoxBackgroundColour,
+        GroupBoxHeaderColour,
+        GroupBoxTeamColor,
     }
 }

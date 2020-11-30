@@ -58,71 +58,93 @@ namespace osu.Game.Tournament.Screens.Drawings
             drawingsConfig = new DrawingsConfigManager(storage);
 
             var teamsPerGroup = drawingsConfig.Get<int>(DrawingsConfig.TeamsPerGroup);
+
+            // colours
+            var scrollingTeamNameColour = parseColourFromConfig(drawingsConfig, DrawingsConfig.PickedTeamColour) ?? OsuColour.Gray(0.95f);
+            var groupBoxBackgroundColour = parseColourFromConfig(drawingsConfig, DrawingsConfig.GroupBoxBackgroundColour) ?? new Color4(54, 54, 54, 255);
+            var groupBoxHeaderColour = parseColourFromConfig(drawingsConfig, DrawingsConfig.GroupBoxHeaderColour) ?? new Color4(255, 204, 34, 255);
+            var groupBoxTeamColour = parseColourFromConfig(drawingsConfig, DrawingsConfig.GroupBoxTeamColor);
+
+            // Groups
+            groupsContainer = new GroupContainer(drawingsConfig.Get<int>(DrawingsConfig.Groups), teamsPerGroup, groupBoxBackgroundColour, groupBoxHeaderColour, groupBoxTeamColour)
+            {
+                Anchor = Anchor.TopCentre,
+                Origin = Anchor.TopCentre,
+
+                RelativeSizeAxes = Axes.Y,
+                AutoSizeAxes = Axes.X,
+
+                Padding = new MarginPadding
+                {
+                    Top = 35f,
+                    Bottom = 35f
+                }
+            };
+            // Scrolling teams
+            teamsContainer = new ScrollingTeamContainer
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+
+                RelativeSizeAxes = Axes.X,
+            };
+            // Scrolling team name
+            fullTeamNameText = new TournamentSpriteText
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.TopCentre,
+
+                Position = new Vector2(0, 40f),
+
+                Colour = scrollingTeamNameColour,
+
+                Alpha = 0,
+
+                Font = OsuFont.Torus.With(weight: FontWeight.Light, size: 42),
+            };
+
+            var mainContainerChildren = new List<Drawable>()
+            {
+                new TourneyVideo("drawings")
+                {
+                    Loop = true,
+                    RelativeSizeAxes = Axes.Both
+                }
+            };
+            if (drawingsConfig.Get<bool>(DrawingsConfig.ShowWorldMap))
+            {
+                mainContainerChildren.Add(new Sprite
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    FillMode = FillMode.Fill,
+                    Texture = textures.Get(@"Backgrounds/Drawings/background.png")
+                });
+            }
+            // Visualiser
+            mainContainerChildren.Add(new VisualiserContainer
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+
+                RelativeSizeAxes = Axes.X,
+                Size = new Vector2(1, 10),
+
+                Colour = new Color4(255, 204, 34, 255),
+
+                Lines = 6
+            });
+            mainContainerChildren.Add(groupsContainer);
+            mainContainerChildren.Add(teamsContainer);
+            mainContainerChildren.Add(fullTeamNameText);
+
+
             InternalChildren = new Drawable[]
             {
                 // Main container
                 new Container
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Children = new Drawable[]
-                    {
-                        //new Sprite
-                        //{
-                        //    RelativeSizeAxes = Axes.Both,
-                        //    FillMode = FillMode.Fill,
-                        //    Texture = textures.Get(@"Backgrounds/Drawings/background.png")
-                        //},
-                        // Visualiser
-                        new VisualiserContainer
-                        {
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-
-                            RelativeSizeAxes = Axes.X,
-                            Size = new Vector2(1, 10),
-
-                            Colour = new Color4(255, 204, 34, 255),
-
-                            Lines = 6
-                        },
-                        // Groups
-                        groupsContainer = new GroupContainer(drawingsConfig.Get<int>(DrawingsConfig.Groups), teamsPerGroup)
-                        {
-                            Anchor = Anchor.TopCentre,
-                            Origin = Anchor.TopCentre,
-
-                            RelativeSizeAxes = Axes.Y,
-                            AutoSizeAxes = Axes.X,
-
-                            Padding = new MarginPadding
-                            {
-                                Top = 35f,
-                                Bottom = 35f
-                            }
-                        },
-                        // Scrolling teams
-                        teamsContainer = new ScrollingTeamContainer
-                        {
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-
-                            RelativeSizeAxes = Axes.X,
-                        },
-                        // Scrolling team name
-                        fullTeamNameText = new TournamentSpriteText
-                        {
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.TopCentre,
-
-                            Position = new Vector2(0, 40f),
-
-                            Colour = OsuColour.Gray(0.95f),
-
-                            Alpha = 0,
-
-                            Font = OsuFont.Torus.With(weight: FontWeight.Light, size: 42),
-                        }
-                    }
+                    Children = mainContainerChildren
                 },
                 // Control panel container
                 new ControlPanel
@@ -170,6 +192,27 @@ namespace osu.Game.Tournament.Screens.Drawings
             teamsContainer.OnScrollStarted += () => fullTeamNameText.FadeOut(200);
 
             reset(true);
+        }
+
+        private Color4? parseColourFromConfig(DrawingsConfigManager drawingsConfig, DrawingsConfig config)
+        {
+            var hexString = drawingsConfig.Get<string>(config);
+            if (string.IsNullOrEmpty(hexString)) return null;
+
+            try
+            {
+                return Color4Extensions.FromHex(hexString);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, $"Failed to parse DrawingsConfig.{config}: \"{hexString}\" is not a valid hex colour string");
+                return null;
+            }
+        }
+
+        private Color4 parseColourFromConfig(DrawingsConfigManager drawingsConfig, DrawingsConfig config, Color4 defaultColour)
+        {
+            return parseColourFromConfig(drawingsConfig, config) ?? defaultColour;
         }
 
         private void onTeamSelected(TournamentTeam team)

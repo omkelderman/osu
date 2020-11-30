@@ -23,6 +23,7 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
         private const int group_team_count_x = 2;
         private const int width = (group_team_count_x * GroupTeam.WIDTH) + ((group_team_count_x - 1) * group_team_spacing_x) + (2 * group_team_margin_x);
         public readonly string GroupName;
+        private readonly Color4? teamTextColour;
 
         public int TeamsCount { get; private set; }
 
@@ -30,9 +31,10 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
 
         private readonly List<GroupTeam> allTeams = new List<GroupTeam>();
 
-        public Group(string name)
+        public Group(string name, Color4 boxBackgroundColour, Color4 boxHeaderColour, Color4? teamTextColour)
         {
             GroupName = name;
+            this.teamTextColour = teamTextColour;
 
             Size = new Vector2(width, height);
 
@@ -44,7 +46,7 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Color4(54, 54, 54, 255)
+                    Colour = boxBackgroundColour
                 },
                 // Group name
                 new TournamentSpriteText
@@ -56,7 +58,7 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
 
                     Text = $"GROUP {name.ToUpperInvariant()}",
                     Font = OsuFont.Torus.With(weight: FontWeight.Bold, size: 8),
-                    Colour = new Color4(255, 204, 34, 255),
+                    Colour = boxHeaderColour,
                 },
                 teams = new FillFlowContainer<GroupTeam>
                 {
@@ -77,7 +79,7 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
 
         public void AddTeam(TournamentTeam team)
         {
-            GroupTeam gt = new GroupTeam(team);
+            GroupTeam gt = new GroupTeam(team, teamTextColour);
 
             if (TeamsCount < 8)
             {
