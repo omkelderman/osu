@@ -22,7 +22,7 @@ namespace osu.Game.Tournament.Components
                 Children = new Drawable[]
                 {
                     new DrawableTeamHeader(colour),
-                    new DrawableTeamTitle(team),
+                    new DrawableTeamTitle(team, colour),
                 }
             };
         }

@@ -3,7 +3,9 @@
 
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Platform;
 using osu.Game.Graphics;
@@ -86,6 +88,8 @@ namespace osu.Game.Tournament.Screens.TeamWin
                 firstDisplay = false;
             }
 
+            ColourInfo textColour = Color4Extensions.FromHex(match.WinnerColour == TeamColour.Red ? "#4c0f08" : "#062649");
+
             mainContainer.Children = new Drawable[]
             {
                 new DrawableTeamFlag(match.Winner)
@@ -104,13 +108,14 @@ namespace osu.Game.Tournament.Screens.TeamWin
                     X = 260,
                     Children = new Drawable[]
                     {
-                        new RoundDisplay(match)
+                        new RoundDisplay(match, textColour)
                         {
                             Margin = new MarginPadding { Bottom = 30 },
                         },
                         new TournamentSpriteText
                         {
                             Text = "WINNER",
+                            Colour = textColour,
                             Font = OsuFont.Torus.With(size: 100, weight: FontWeight.Bold),
                             Margin = new MarginPadding { Bottom = 50 },
                         },

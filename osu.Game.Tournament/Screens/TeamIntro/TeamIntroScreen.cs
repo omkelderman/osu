@@ -3,6 +3,7 @@
 
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Platform;
@@ -54,7 +55,7 @@ namespace osu.Game.Tournament.Screens.TeamIntro
 
             mainContainer.Children = new Drawable[]
             {
-                new RoundDisplay(match.NewValue)
+                new RoundDisplay(match.NewValue, Color4Extensions.FromHex("#024656"))
                 {
                     Position = new Vector2(100, 100)
                 },

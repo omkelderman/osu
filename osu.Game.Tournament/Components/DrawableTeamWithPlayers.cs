@@ -54,7 +54,7 @@ namespace osu.Game.Tournament.Components
                 },
             };
 
-            TournamentSpriteText createPlayerText(User p) =>
+            static TournamentSpriteText createPlayerText(User p) =>
                 new TournamentSpriteText
                 {
                     Text = p.Username,

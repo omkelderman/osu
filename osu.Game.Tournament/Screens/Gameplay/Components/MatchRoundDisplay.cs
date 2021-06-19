@@ -3,14 +3,21 @@
 
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Game.Tournament.Components;
 using osu.Game.Tournament.Models;
+using osuTK.Graphics;
 
 namespace osu.Game.Tournament.Screens.Gameplay.Components
 {
     public class MatchRoundDisplay : TournamentSpriteTextWithBackground
     {
         private readonly Bindable<TournamentMatch> currentMatch = new Bindable<TournamentMatch>();
+
+        public MatchRoundDisplay()
+            : base(backgroundColour: Color4.Transparent, foregroundColour:Color4Extensions.FromHex("#01313c"))
+        {
+        }
 
         [BackgroundDependencyLoader]
         private void load(LadderInfo ladder)

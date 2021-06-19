@@ -5,7 +5,9 @@ using System;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Platform;
@@ -71,10 +73,10 @@ namespace osu.Game.Tournament.Screens.Schedule
                                                 {
                                                     new Box
                                                     {
-                                                        Colour = Color4.White,
+                                                        Colour = Color4Extensions.FromHex("#05b7e2"),
                                                         Size = new Vector2(50, 10),
                                                     },
-                                                    new TournamentSpriteTextWithBackground("Schedule")
+                                                    new TournamentSpriteTextWithBackground("Schedule", Color4.Transparent, Color4Extensions.FromHex("#01313c"))
                                                     {
                                                         X = 60,
                                                         Scale = new Vector2(0.8f)
@@ -133,7 +135,7 @@ namespace osu.Game.Tournament.Screens.Schedule
                             Direction = FillDirection.Horizontal,
                             Children = new Drawable[]
                             {
-                                new ScheduleContainer("recent matches")
+                                new ScheduleContainer("recent matches", Color4.Transparent, Color4Extensions.FromHex("#01313c"))
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     Width = 0.4f,
@@ -144,7 +146,7 @@ namespace osu.Game.Tournament.Screens.Schedule
                                                                .Take(8)
                                                                .Select(p => new ScheduleMatch(p))
                                 },
-                                new ScheduleContainer("upcoming matches")
+                                new ScheduleContainer("upcoming matches", Color4.Transparent, Color4Extensions.FromHex("#01313c"))
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     Width = 0.6f,
@@ -153,7 +155,7 @@ namespace osu.Game.Tournament.Screens.Schedule
                             }
                         }
                     },
-                    new ScheduleContainer("coming up next")
+                    new ScheduleContainer("coming up next", Color4Extensions.FromHex("#024656"), Color4.White)
                     {
                         RelativeSizeAxes = Axes.Both,
                         Height = 0.25f,
@@ -171,7 +173,7 @@ namespace osu.Game.Tournament.Screens.Schedule
                                         Anchor = Anchor.CentreLeft,
                                         Origin = Anchor.CentreLeft,
                                     },
-                                    new TournamentSpriteTextWithBackground(match.NewValue.Round.Value?.Name.Value)
+                                    new TournamentSpriteTextWithBackground(match.NewValue.Round.Value?.Name.Value, Color4Extensions.FromHex("#024656"), Color4.White)
                                     {
                                         Anchor = Anchor.CentreLeft,
                                         Origin = Anchor.CentreLeft,
@@ -222,13 +224,15 @@ namespace osu.Game.Tournament.Screens.Schedule
                 if (conditional)
                     Colour = OsuColour.Gray(0.5f);
 
+                ColourInfo textColour = Color4Extensions.FromHex("#000");
+
                 if (showTimestamp)
                 {
                     AddInternal(new DrawableDate(Match.Date.Value)
                     {
                         Anchor = Anchor.TopRight,
                         Origin = Anchor.TopLeft,
-                        Colour = OsuColour.Gray(0.7f),
+                        Colour = textColour,
                         Alpha = conditional ? 0.6f : 1,
                         Font = OsuFont.Torus,
                         Margin = new MarginPadding { Horizontal = 10, Vertical = 5 },
@@ -237,7 +241,7 @@ namespace osu.Game.Tournament.Screens.Schedule
                     {
                         Anchor = Anchor.BottomRight,
                         Origin = Anchor.BottomLeft,
-                        Colour = OsuColour.Gray(0.7f),
+                        Colour = textColour,
                         Alpha = conditional ? 0.6f : 1,
                         Margin = new MarginPadding { Horizontal = 10, Vertical = 5 },
                         Text = match.Date.Value.ToUniversalTime().ToString("HH:mm UTC") + (conditional ? " (conditional)" : "")
@@ -264,7 +268,7 @@ namespace osu.Game.Tournament.Screens.Schedule
 
             private readonly FillFlowContainer content;
 
-            public ScheduleContainer(string title)
+            public ScheduleContainer(string title, ColourInfo? backgroundColour = null, ColourInfo? foregroundColour = null)
             {
                 Padding = new MarginPadding { Left = 60, Top = 10 };
                 InternalChildren = new Drawable[]
@@ -275,7 +279,7 @@ namespace osu.Game.Tournament.Screens.Schedule
                         Direction = FillDirection.Vertical,
                         Children = new Drawable[]
                         {
-                            new TournamentSpriteTextWithBackground(title.ToUpperInvariant())
+                            new TournamentSpriteTextWithBackground(title.ToUpperInvariant(), backgroundColour, foregroundColour)
                             {
                                 Scale = new Vector2(0.5f)
                             },

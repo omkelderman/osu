@@ -6,6 +6,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.Textures;
 using osu.Game.Tournament.Models;
+using osuTK.Graphics;
 
 namespace osu.Game.Tournament.Components
 {
@@ -16,7 +17,8 @@ namespace osu.Game.Tournament.Components
         [UsedImplicitly]
         private Bindable<string> acronym;
 
-        public DrawableTeamTitle(TournamentTeam team)
+        public DrawableTeamTitle(TournamentTeam team, TeamColour colour)
+            : base(backgroundColour: Color4.Transparent, foregroundColour: TournamentGame.GetTeamColour(colour))
         {
             this.team = team;
         }

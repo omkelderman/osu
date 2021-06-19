@@ -2,15 +2,17 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Graphics;
 using osu.Game.Tournament.Models;
+using osuTK.Graphics;
 
 namespace osu.Game.Tournament.Components
 {
     public class RoundDisplay : CompositeDrawable
     {
-        public RoundDisplay(TournamentMatch match)
+        public RoundDisplay(TournamentMatch match, ColourInfo? textColour = null)
         {
             AutoSizeAxes = Axes.Y;
             RelativeSizeAxes = Axes.X;
@@ -33,6 +35,7 @@ namespace osu.Game.Tournament.Components
                         {
                             Anchor = Anchor.TopLeft,
                             Origin = Anchor.TopLeft,
+                            Colour = textColour ?? Color4.White,
                             Text = match.Round.Value?.Name.Value ?? "Unknown Round",
                             Font = OsuFont.Torus.With(size: 26, weight: FontWeight.SemiBold)
                         },
