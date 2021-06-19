@@ -80,7 +80,7 @@ namespace osu.Game.Tournament.Screens.Gameplay.Components
                                         {
                                             new DrawableTeamHeader(colour)
                                             {
-                                                Scale = new Vector2(0.75f),
+                                                Scale = new Vector2(0.715f),
                                                 Origin = anchor,
                                                 Anchor = anchor,
                                             },

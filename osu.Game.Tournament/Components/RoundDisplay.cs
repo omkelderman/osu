@@ -4,7 +4,6 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
-using osu.Game.Graphics;
 using osu.Game.Tournament.Models;
 using osuTK.Graphics;
 
@@ -37,7 +36,7 @@ namespace osu.Game.Tournament.Components
                             Origin = Anchor.TopLeft,
                             Colour = textColour ?? Color4.White,
                             Text = match.Round.Value?.Name.Value ?? "Unknown Round",
-                            Font = OsuFont.Torus.With(size: 26, weight: FontWeight.SemiBold)
+                            Font = AgtsFont.MontserratBold.With(size: 26)
                         },
                     }
                 }

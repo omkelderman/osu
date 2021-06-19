@@ -8,6 +8,8 @@ using osu.Framework.Bindables;
 using osu.Framework.Configuration;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Game.Graphics;
+using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Graphics.UserInterfaceV2;
 using osu.Game.Online.API;
@@ -119,6 +121,36 @@ namespace osu.Game.Tournament.Screens.Setup
                     {
                         windowSize.Value = new Size((int)(height * aspect_ratio / TournamentSceneManager.STREAM_AREA_WIDTH * TournamentSceneManager.REQUIRED_WIDTH), height);
                     }
+                },
+                new OsuSpriteText
+                {
+                    Text = "The quick brown fox jumps over the lazy dog",
+                    Font = OsuFont.Torus.With(size: 20f)
+                },
+                new OsuSpriteText
+                {
+                    Text = "The quick brown fox jumps over the lazy dog",
+                    Font = AgtsFont.OswaldBold.With(size: 20f)
+                },
+                new OsuSpriteText
+                {
+                    Text = "The quick brown fox jumps over the lazy dog",
+                    Font = AgtsFont.MontserratMedium.With(size: 20f)
+                },
+                new OsuSpriteText
+                {
+                    Text = "The quick brown fox jumps over the lazy dog",
+                    Font = AgtsFont.MontserratSemiBold.With(size: 20f)
+                },
+                new OsuSpriteText
+                {
+                    Text = "The quick brown fox jumps over the lazy dog",
+                    Font = AgtsFont.MontserratBold.With(size: 20f)
+                },
+                new OsuSpriteText
+                {
+                    Text = "The quick brown fox jumps over the lazy dog",
+                    Font = AgtsFont.MontserratBlack.With(size: 20f)
                 },
             };
         }

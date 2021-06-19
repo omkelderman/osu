@@ -15,7 +15,7 @@ namespace osu.Game.Tournament.Screens.Gameplay.Components
         private readonly Bindable<TournamentMatch> currentMatch = new Bindable<TournamentMatch>();
 
         public MatchRoundDisplay()
-            : base(backgroundColour: Color4.Transparent, foregroundColour:Color4Extensions.FromHex("#01313c"))
+            : base(backgroundColour: Color4.Transparent, foregroundColour: Color4Extensions.FromHex("#01313c"), font: AgtsFont.OswaldBold, fontSize: 100)
         {
         }
 
@@ -27,6 +27,6 @@ namespace osu.Game.Tournament.Screens.Gameplay.Components
         }
 
         private void matchChanged(ValueChangedEvent<TournamentMatch> match) =>
-            Text.Text = match.NewValue.Round.Value?.Name.Value ?? "Unknown Round";
+            Text.Text = (match.NewValue.Round.Value?.Name.Value ?? "Unknown Round").ToUpperInvariant();
     }
 }

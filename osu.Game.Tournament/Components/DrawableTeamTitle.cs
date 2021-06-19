@@ -18,7 +18,7 @@ namespace osu.Game.Tournament.Components
         private Bindable<string> acronym;
 
         public DrawableTeamTitle(TournamentTeam team, TeamColour colour)
-            : base(backgroundColour: Color4.Transparent, foregroundColour: TournamentGame.GetTeamColour(colour))
+            : base(backgroundColour: Color4.Transparent, foregroundColour: TournamentGame.GetTeamColour(colour), font: AgtsFont.OswaldMedium, fontSize: 60)
         {
             this.team = team;
         }
@@ -28,7 +28,7 @@ namespace osu.Game.Tournament.Components
         {
             if (team == null) return;
 
-            (acronym = team.Acronym.GetBoundCopy()).BindValueChanged(acronym => Text.Text = team?.FullName.Value ?? string.Empty, true);
+            (acronym = team.Acronym.GetBoundCopy()).BindValueChanged(acronym => Text.Text = team?.FullName.Value?.ToUpperInvariant() ?? string.Empty, true);
         }
     }
 }

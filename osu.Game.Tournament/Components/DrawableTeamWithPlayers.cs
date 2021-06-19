@@ -4,7 +4,6 @@
 using System.Linq;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Game.Graphics;
 using osu.Game.Tournament.Models;
 using osu.Game.Users;
 using osuTK;
@@ -58,7 +57,7 @@ namespace osu.Game.Tournament.Components
                 new TournamentSpriteText
                 {
                     Text = p.Username,
-                    Font = OsuFont.Torus.With(size: 24, weight: FontWeight.SemiBold),
+                    Font = AgtsFont.MontserratSemiBold.With(size: 24),
                     Colour = Color4.White,
                 };
         }

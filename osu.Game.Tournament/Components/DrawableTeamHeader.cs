@@ -9,6 +9,7 @@ namespace osu.Game.Tournament.Components
     public class DrawableTeamHeader : TournamentSpriteTextWithBackground
     {
         public DrawableTeamHeader(TeamColour colour)
+            : base(font: AgtsFont.MontserratBold)
         {
             Background.Colour = TournamentGame.GetTeamColour(colour);
 

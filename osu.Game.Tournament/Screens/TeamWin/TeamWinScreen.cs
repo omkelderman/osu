@@ -110,14 +110,14 @@ namespace osu.Game.Tournament.Screens.TeamWin
                     {
                         new RoundDisplay(match, textColour)
                         {
-                            Margin = new MarginPadding { Bottom = 30 },
+                            Margin = new MarginPadding { Top = 15 },
                         },
                         new TournamentSpriteText
                         {
                             Text = "WINNER",
                             Colour = textColour,
-                            Font = OsuFont.Torus.With(size: 100, weight: FontWeight.Bold),
-                            Margin = new MarginPadding { Bottom = 50 },
+                            Font = AgtsFont.OswaldBold.With(size: 150),
+                            Margin = new MarginPadding { Bottom = 20 },
                         },
                         new DrawableTeamWithPlayers(match.Winner, match.WinnerColour)
                     }
