@@ -42,7 +42,17 @@ namespace osu.Game.Tournament
         [BackgroundDependencyLoader]
         private void load(Storage baseStorage)
         {
-            Resources.AddStore(new DllResourceStore(typeof(TournamentGameBase).Assembly));
+            var osuGameTournamentDllResourceStore = new DllResourceStore(typeof(TournamentGameBase).Assembly);
+            Resources.AddStore(osuGameTournamentDllResourceStore);
+
+            // load all fonts found in the osu.Game.Tournament.dll file
+            foreach (var resource in osuGameTournamentDllResourceStore
+                                     .GetAvailableResources()
+                                     .Where(resource => resource.EndsWith(".fnt", StringComparison.InvariantCultureIgnoreCase))
+                                     .Select(resource => resource[..^4]))
+            {
+                AddFont(Resources, resource);
+            }
 
             dependencies.CacheAs<Storage>(storage = new TournamentStorage(baseStorage));
             dependencies.CacheAs(storage);
