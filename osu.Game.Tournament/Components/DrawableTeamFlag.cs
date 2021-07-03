@@ -1,6 +1,8 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using System;
+using System.Linq;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -28,9 +30,11 @@ namespace osu.Game.Tournament.Components
         }
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures)
+        private void load(TextureStore textures, LargeTextureStore largeTextures)
         {
             if (team == null) return;
+
+            if (largeTextures == null) throw new ArgumentNullException(nameof(largeTextures));
 
             Size = new Vector2(75, 50);
             Masking = true;
@@ -43,7 +47,36 @@ namespace osu.Game.Tournament.Components
                 FillMode = FillMode.Fill
             };
 
-            (flag = team.FlagName.GetBoundCopy()).BindValueChanged(acronym => flagSprite.Texture = textures.Get($@"Flags/{team.FlagName}"), true);
+            (flag = team.FlagName.GetBoundCopy()).BindValueChanged(acronym =>
+            {
+                if (isUserId(team.FlagName.Value, out var userId))
+                {
+                    // this is super omega ugly and will freeze the client while its loading, but that should only happen at startup anyway so whatever
+                    var avatarTex = largeTextures.Get($@"https://a.ppy.sh/{userId}");
+                    if (avatarTex == null) avatarTex = largeTextures.Get(@"Online/avatar-guest");
+                    flagSprite.Texture = avatarTex;
+                    flagSprite.FillMode = FillMode.Fit;
+                    return;
+                }
+
+                flagSprite.Texture = textures.Get($@"Flags/{team.FlagName}");
+                flagSprite.FillMode = FillMode.Fill;
+            }, true);
+        }
+
+        private static bool isUserId(string str, out int userId)
+        {
+            userId = 0;
+            if (string.IsNullOrEmpty(str)) return false;
+
+            if (str.Any(c => c < '0' || c > '9'))
+            {
+                return false;
+            }
+
+            userId = int.Parse(str);
+
+            return userId != 0;
         }
     }
 }

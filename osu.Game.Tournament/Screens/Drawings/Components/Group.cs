@@ -16,6 +16,13 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
 {
     public class Group : Container
     {
+        private const float height = 128f;
+
+        //private const float group_team_spacing_x = 6f;
+        private const float group_team_spacing_x = 1f;
+        private const float group_team_margin_x = 7f;
+        private const int group_team_count_x = 4;
+        private const float width = (group_team_count_x * GroupTeam.WIDTH) + ((group_team_count_x - 1) * group_team_spacing_x) + (2 * group_team_margin_x);
         public readonly string GroupName;
 
         public int TeamsCount { get; private set; }
@@ -28,7 +35,7 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
         {
             GroupName = name;
 
-            Size = new Vector2(176, 128);
+            Size = new Vector2(width, height);
 
             Masking = true;
             CornerRadius = 4;
@@ -48,7 +55,7 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
 
                     Position = new Vector2(0, 7f),
 
-                    Text = $"GROUP {name.ToUpperInvariant()}",
+                    Text = $"TEAM {name}",
                     Font = OsuFont.Torus.With(weight: FontWeight.Bold, size: 8),
                     Colour = new Color4(255, 204, 34, 255),
                 },
@@ -56,14 +63,14 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
                 {
                     RelativeSizeAxes = Axes.Both,
 
-                    Spacing = new Vector2(6f, 22),
+                    Spacing = new Vector2(group_team_spacing_x, 22),
 
                     Margin = new MarginPadding
                     {
                         Top = 21f,
                         Bottom = 7f,
-                        Left = 7f,
-                        Right = 7f
+                        Left = group_team_margin_x,
+                        Right = group_team_margin_x
                     }
                 }
             };

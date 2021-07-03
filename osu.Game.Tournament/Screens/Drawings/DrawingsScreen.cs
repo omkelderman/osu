@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
@@ -56,6 +55,7 @@ namespace osu.Game.Tournament.Screens.Drawings
 
             drawingsConfig = new DrawingsConfigManager(storage);
 
+            var teamsPerGroup = drawingsConfig.Get<int>(DrawingsConfig.TeamsPerGroup);
             InternalChildren = new Drawable[]
             {
                 // Main container
@@ -64,13 +64,11 @@ namespace osu.Game.Tournament.Screens.Drawings
                     RelativeSizeAxes = Axes.Both,
                     Children = new Drawable[]
                     {
-                        new Sprite
+                        new TourneyVideo("drawings")
                         {
+                            Loop = true,
                             RelativeSizeAxes = Axes.Both,
-                            FillMode = FillMode.Fill,
-                            Texture = textures.Get(@"Backgrounds/Drawings/background.png")
                         },
-                        // Visualiser
                         new VisualiserContainer
                         {
                             Anchor = Anchor.Centre,
@@ -84,7 +82,7 @@ namespace osu.Game.Tournament.Screens.Drawings
                             Lines = 6
                         },
                         // Groups
-                        groupsContainer = new GroupContainer(drawingsConfig.Get<int>(DrawingsConfig.Groups), drawingsConfig.Get<int>(DrawingsConfig.TeamsPerGroup))
+                        groupsContainer = new GroupContainer(drawingsConfig.Get<int>(DrawingsConfig.Groups), teamsPerGroup)
                         {
                             Anchor = Anchor.TopCentre,
                             Origin = Anchor.TopCentre,
@@ -112,7 +110,7 @@ namespace osu.Game.Tournament.Screens.Drawings
                             Anchor = Anchor.Centre,
                             Origin = Anchor.TopCentre,
 
-                            Position = new Vector2(0, 45f),
+                            Position = new Vector2(0, 35f),
 
                             Colour = OsuColour.Gray(0.95f),
 
@@ -153,6 +151,13 @@ namespace osu.Game.Tournament.Screens.Drawings
 
                         Text = "Reset",
                         Action = () => reset()
+                    },
+                    new TourneyButton()
+                    {
+                        RelativeSizeAxes = Axes.X,
+
+                        Text = "Test",
+                        Action = () => teamsContainer.Test(teamsPerGroup)
                     }
                 }
             };
