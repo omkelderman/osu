@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Textures;
@@ -112,7 +113,7 @@ namespace osu.Game.Tournament.Screens.Drawings
 
                             Position = new Vector2(0, 35f),
 
-                            Colour = OsuColour.Gray(0.95f),
+                            Colour = Color4Extensions.FromHex("#00c0b9"),
 
                             Alpha = 0,
 
