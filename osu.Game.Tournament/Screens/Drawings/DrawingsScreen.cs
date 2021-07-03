@@ -113,7 +113,7 @@ namespace osu.Game.Tournament.Screens.Drawings
 
                             Position = new Vector2(0, 35f),
 
-                            Colour = Color4Extensions.FromHex("#00c0b9"),
+                            Colour = Color4Extensions.FromHex(drawingsConfig.Get<string>(DrawingsConfig.Colour)),
 
                             Alpha = 0,
 
