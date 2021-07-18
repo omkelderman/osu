@@ -192,7 +192,7 @@ namespace osu.Game.Tournament.Screens.MapPool
                     var pickBan = currentMatch.Value.PicksBans[i];
                     var first = list[0]; // cannot throw, we just checked that list is always larger or equal to currentMatch.Value.PicksBans in size
 
-                    if (first.BeatmapID == pickBan.BeatmapID)
+                    if (first.BeatmapID == pickBan.BeatmapID && first.Team == pickBan.Team && first.Type == pickBan.Type)
                     {
                         // ok we gud, so far we're following the normal list
                         list.RemoveAt(0);
@@ -251,19 +251,23 @@ namespace osu.Game.Tournament.Screens.MapPool
                 var bansRange = $"'{matchId}'!B11:D12";
                 var picksRange = $"'{matchId}'!B15:C30";
                 var mapPoolRange = $"'{matchId}'!J4:K30";
+                var firstBanPlayerRange = $"'{matchId}'!D8";
 
-                var bansPicks = await doSheetGetReq(sheetsService, spreadsheetId, bansRange, picksRange, mapPoolRange);
-                var (firstBanPlayer, p1Ban1, p1Ban2) = getBans(bansPicks.ValueRanges[0].Values[0]);
-                var (secondBanPlayer, p2Ban1, p2Ban2) = getBans(bansPicks.ValueRanges[0].Values[1]);
+                var bansPicks = await doSheetGetReq(sheetsService, spreadsheetId, bansRange, picksRange, mapPoolRange, firstBanPlayerRange);
+                var (banP1, p1Ban1, p1Ban2) = getBans(bansPicks.ValueRanges[0].Values[0]);
+                var (banP2, p2Ban1, p2Ban2) = getBans(bansPicks.ValueRanges[0].Values[1]);
                 var mapPool = parseMapPool(bansPicks.ValueRanges[2]);
 
-                if (firstBanPlayer != p1 || secondBanPlayer != p2)
+                var firstBanPlayer = bansPicks.ValueRanges[3].Values?[0][0] as string;
+                var p2HasFirstBan = p2 == firstBanPlayer;
+
+                if (banP1 != p1 || banP2 != p2)
                 {
                     // ????
                     return ("sheet is borked or this program is borked, could not figure out who banned what", null, (p1Score, p2Score));
                 }
 
-                (BeatmapChoice ban1, BeatmapChoice ban2)? processBan(string p1Ban, string p2Ban)
+                (BeatmapChoice banP1, BeatmapChoice banP2)? processBan(string p1Ban, string p2Ban)
                 {
                     var p1Empty = string.IsNullOrEmpty(p1Ban);
                     var p2Empty = string.IsNullOrEmpty(p2Ban);
@@ -327,8 +331,10 @@ namespace osu.Game.Tournament.Screens.MapPool
                     return ("error parsing bans", null, (p1Score, p2Score));
                 }
 
-                var bans = new[] { bans1.Value.ban1, bans1.Value.ban2, bans2.Value.ban1, bans2.Value.ban2 }.Where(x => x != null).ToList();
-
+                var beatmapChoices = p2HasFirstBan
+                    ? new[] { bans1.Value.banP2, bans1.Value.banP1, bans2.Value.banP2, bans2.Value.banP1 }
+                    : new[] { bans1.Value.banP1, bans1.Value.banP2, bans2.Value.banP1, bans2.Value.banP2 };
+                var bans = beatmapChoices.Where(x => x != null).ToList();
                 var picks = parsePicks(bansPicks.ValueRanges[1].Values, mapPool, p1, p2);
 
                 if (picks == null)
