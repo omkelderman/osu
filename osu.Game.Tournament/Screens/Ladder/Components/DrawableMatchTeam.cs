@@ -68,7 +68,7 @@ namespace osu.Game.Tournament.Screens.Ladder.Components
 
             AcronymText.Anchor = AcronymText.Origin = Anchor.CentreLeft;
             AcronymText.Padding = new MarginPadding { Left = 50 };
-            AcronymText.Font = OsuFont.Torus.With(size: 22, weight: FontWeight.Bold);
+            AcronymText.Font = EgtsFont.RedHatDisplay.With(size: 22, weight: FontWeight.Black, italics: true);
 
             if (match != null)
             {
@@ -124,7 +124,7 @@ namespace osu.Game.Tournament.Screens.Ladder.Components
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
-                            Font = OsuFont.Torus.With(size: 22),
+                            Font = EgtsFont.RedHatDisplay.With(size: 22, italics: true),
                         }
                     }
                 }
@@ -186,7 +186,7 @@ namespace osu.Game.Tournament.Screens.Ladder.Components
 
             AcronymText.Colour = winner ? Color4.Black : Color4.White;
 
-            scoreText.Font = scoreText.Font.With(weight: winner ? FontWeight.Bold : FontWeight.Regular);
+            scoreText.Font = scoreText.Font.With(weight: winner ? FontWeight.Black : FontWeight.Medium);
         }
 
         public MenuItem[] ContextMenuItems

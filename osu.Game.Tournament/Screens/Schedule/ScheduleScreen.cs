@@ -5,16 +5,17 @@ using System;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Platform;
 using osu.Game.Graphics;
+using osu.Game.Graphics.Sprites;
 using osu.Game.Tournament.Components;
 using osu.Game.Tournament.Models;
 using osu.Game.Tournament.Screens.Ladder.Components;
 using osuTK;
-using osuTK.Graphics;
 
 namespace osu.Game.Tournament.Screens.Schedule
 {
@@ -56,33 +57,29 @@ namespace osu.Game.Tournament.Screens.Schedule
                             {
                                 new Drawable[]
                                 {
-                                    new FillFlowContainer
+                                    new FillFlowContainer<OsuSpriteText>
                                     {
+                                        Margin = new MarginPadding { Top = 75, Left = 60 },
+                                        Padding = new MarginPadding { Left = 10, Right = 20 },
+                                        Direction = FillDirection.Horizontal,
                                         AutoSizeAxes = Axes.Both,
-                                        Direction = FillDirection.Vertical,
-                                        Children = new Drawable[]
+                                        Spacing = new Vector2(2),
+                                        Children = new[]
                                         {
-                                            new DrawableTournamentHeaderText(),
-                                            new Container
+                                            new OsuSpriteText
                                             {
-                                                Margin = new MarginPadding { Top = 40 },
-                                                AutoSizeAxes = Axes.Both,
-                                                Children = new Drawable[]
-                                                {
-                                                    new Box
-                                                    {
-                                                        Colour = Color4.White,
-                                                        Size = new Vector2(50, 10),
-                                                    },
-                                                    new TournamentSpriteTextWithBackground("Schedule")
-                                                    {
-                                                        X = 60,
-                                                        Scale = new Vector2(0.8f)
-                                                    }
-                                                }
+                                                Text = "Expert Global Taiko Showdown ".ToUpperInvariant(),
+                                                Colour = Color4Extensions.FromHex("#fff"),
+                                                Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Black, size: 30, italics: true),
+                                            },
+                                            new OsuSpriteText
+                                            {
+                                                Text = "2021",
+                                                Colour = Color4Extensions.FromHex("#E70991"),
+                                                Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Black, size: 30, italics: true),
                                             },
                                         }
-                                    },
+                                    }
                                 },
                                 new Drawable[]
                                 {
@@ -134,7 +131,7 @@ namespace osu.Game.Tournament.Screens.Schedule
                             Direction = FillDirection.Horizontal,
                             Children = new Drawable[]
                             {
-                                new ScheduleContainer("recent matches")
+                                new ScheduleContainer("recent matches", colour: Color4Extensions.FromHex("#FFC53B"))
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     Width = 0.4f,
@@ -145,7 +142,7 @@ namespace osu.Game.Tournament.Screens.Schedule
                                                                .Take(8)
                                                                .Select(p => new ScheduleMatch(p))
                                 },
-                                new ScheduleContainer("upcoming matches")
+                                new ScheduleContainer("upcoming matches", colour: Color4Extensions.FromHex("#FFC53B"))
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     Width = 0.6f,
@@ -154,7 +151,7 @@ namespace osu.Game.Tournament.Screens.Schedule
                             }
                         }
                     },
-                    comingUpNext = new ScheduleContainer("coming up next")
+                    comingUpNext = new ScheduleContainer("coming up next", FontWeight.Black)
                     {
                         RelativeSizeAxes = Axes.Both,
                         Height = 0.25f,
@@ -176,18 +173,41 @@ namespace osu.Game.Tournament.Screens.Schedule
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,
                         },
-                        new TournamentSpriteTextWithBackground(match.NewValue.Round.Value?.Name.Value)
+                        new OsuSpriteText
                         {
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,
-                            Scale = new Vector2(0.5f)
+                            Text = match.NewValue.Round.Value?.Name.Value?.ToUpperInvariant(),
+                            Padding = new MarginPadding { Left = 10, Right = 20 },
+                            Colour = Color4Extensions.FromHex("#fff"),
+                            Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Black, size: 25, italics: true),
                         },
-                        new TournamentSpriteText
+                        new FillFlowContainer<OsuSpriteText>
                         {
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,
-                            Text = match.NewValue.Team1.Value?.FullName + " vs " + match.NewValue.Team2.Value?.FullName,
-                            Font = OsuFont.Torus.With(size: 24, weight: FontWeight.SemiBold)
+                            Direction = FillDirection.Horizontal,
+                            AutoSizeAxes = Axes.Both,
+                            Spacing = new Vector2(2),
+                            Children = new[]
+                            {
+                                new OsuSpriteText
+                                {
+                                    Text = match.NewValue.Team1.Value?.FullName.Value,
+                                    Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Bold, size: 24, italics: true)
+                                },
+                                new OsuSpriteText
+                                {
+                                    Text = " vs ",
+                                    Colour = Color4Extensions.FromHex("#ffc43d"),
+                                    Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Bold, size: 24, italics: true)
+                                },
+                                new OsuSpriteText
+                                {
+                                    Text = match.NewValue.Team2.Value?.FullName.Value,
+                                    Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Bold, size: 24, italics: true)
+                                },
+                            },
                         },
                         new FillFlowContainer
                         {
@@ -199,7 +219,7 @@ namespace osu.Game.Tournament.Screens.Schedule
                             {
                                 new ScheduleMatchDate(match.NewValue.Date.Value)
                                 {
-                                    Font = OsuFont.Torus.With(size: 24, weight: FontWeight.Regular)
+                                    Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Regular, size: 24, italics: true)
                                 }
                             }
                         },
@@ -230,17 +250,18 @@ namespace osu.Game.Tournament.Screens.Schedule
                     {
                         Anchor = Anchor.TopRight,
                         Origin = Anchor.TopLeft,
-                        Colour = OsuColour.Gray(0.7f),
+                        Colour = OsuColour.Gray(0.85f),
                         Alpha = conditional ? 0.6f : 1,
-                        Font = OsuFont.Torus,
+                        Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Medium),
                         Margin = new MarginPadding { Horizontal = 10, Vertical = 5 },
                     });
-                    AddInternal(new TournamentSpriteText
+                    AddInternal(new OsuSpriteText
                     {
                         Anchor = Anchor.BottomRight,
                         Origin = Anchor.BottomLeft,
-                        Colour = OsuColour.Gray(0.7f),
+                        Colour = OsuColour.Gray(0.85f),
                         Alpha = conditional ? 0.6f : 1,
+                        Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Medium),
                         Margin = new MarginPadding { Horizontal = 10, Vertical = 5 },
                         Text = match.Date.Value.ToUniversalTime().ToString("HH:mm UTC") + (conditional ? " (conditional)" : "")
                     });
@@ -266,7 +287,7 @@ namespace osu.Game.Tournament.Screens.Schedule
 
             private readonly FillFlowContainer content;
 
-            public ScheduleContainer(string title)
+            public ScheduleContainer(string title, FontWeight weight = FontWeight.Bold, ColourInfo? colour = null)
             {
                 Padding = new MarginPadding { Left = 60, Top = 10 };
                 InternalChildren = new Drawable[]
@@ -277,9 +298,12 @@ namespace osu.Game.Tournament.Screens.Schedule
                         Direction = FillDirection.Vertical,
                         Children = new Drawable[]
                         {
-                            new TournamentSpriteTextWithBackground(title.ToUpperInvariant())
+                            new OsuSpriteText
                             {
-                                Scale = new Vector2(0.5f)
+                                Text = title.ToUpperInvariant(),
+                                Padding = new MarginPadding { Left = 10, Right = 20 },
+                                Colour = colour ?? Color4Extensions.FromHex("#fff"),
+                                Font = EgtsFont.RedHatDisplay.With(weight: weight, size: 25, italics: true),
                             },
                             content = new FillFlowContainer
                             {
