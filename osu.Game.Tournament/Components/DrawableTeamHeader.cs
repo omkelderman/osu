@@ -2,7 +2,6 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Framework.Graphics;
-using osu.Game.Graphics;
 using osu.Game.Tournament.Models;
 using osuTK;
 
@@ -10,15 +9,15 @@ namespace osu.Game.Tournament.Components
 {
     public class DrawableTeamHeader : TournamentSpriteTextWithBackground
     {
-        public DrawableTeamHeader(TeamColour colour)
+        public DrawableTeamHeader(TeamColour colour, bool doShear = true)
+            : base(bgColour: TournamentGame.GetTeamColour(colour), textColour: TournamentGame.TEXT_COLOUR)
         {
-            Text.Colour = TournamentGame.TEXT_COLOUR;
             Text.Text = $"Team {colour}".ToUpperInvariant();
-            Text.Font = Text.Font.With(weight: FontWeight.Medium, italics: true);
             Text.Scale = new Vector2(0.6f);
 
-            Background.Colour = TournamentGame.GetTeamColour(colour);
-            Background.Shear = new Vector2(EgtsConstants.ParallelogramAngleTanVale, 0);
+            if (!doShear) return;
+
+            Background.Shear = EgtsConstants.ShearVector;
 
             // move the background box a bit to the right since the Shear thing extended it to the left
             var offset = (Text.Font.Size * EgtsConstants.ParallelogramAngleTanVale) / 4;

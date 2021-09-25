@@ -150,8 +150,8 @@ namespace osu.Game.Tournament.Screens.Gameplay.Components
 
             private void updateFont(bool winning)
                 => displayedSpriteText.Font = winning
-                    ? OsuFont.Torus.With(weight: FontWeight.Bold, size: 50, fixedWidth: true)
-                    : OsuFont.Torus.With(weight: FontWeight.Regular, size: 40, fixedWidth: true);
+                    ? EgtsFont.RedHatDisplay.With(weight: FontWeight.Black, size: 50, fixedWidth: true, italics: true)
+                    : EgtsFont.RedHatDisplay.With(weight: FontWeight.Medium, size: 40, fixedWidth: true, italics: true);
         }
     }
 }

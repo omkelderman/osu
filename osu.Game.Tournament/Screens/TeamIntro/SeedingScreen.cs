@@ -214,7 +214,7 @@ namespace osu.Game.Tournament.Screens.TeamIntro
                         {
                             new Box
                             {
-                                Shear = new Vector2(EgtsConstants.ParallelogramAngleTanVale, 0),
+                                Shear = EgtsConstants.ShearVector,
                                 RelativeSizeAxes = Axes.Both,
                                 Colour = Color4Extensions.FromHex("#ffc63b"),
                             },

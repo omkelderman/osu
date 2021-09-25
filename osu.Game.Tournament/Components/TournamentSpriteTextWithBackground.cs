@@ -2,6 +2,7 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Graphics;
@@ -13,7 +14,7 @@ namespace osu.Game.Tournament.Components
         protected readonly TournamentSpriteText Text;
         protected readonly Box Background;
 
-        public TournamentSpriteTextWithBackground(string text = "")
+        public TournamentSpriteTextWithBackground(string text = "", ColourInfo? bgColour = null, ColourInfo? textColour = null)
         {
             AutoSizeAxes = Axes.Both;
 
@@ -21,13 +22,13 @@ namespace osu.Game.Tournament.Components
             {
                 Background = new Box
                 {
-                    Colour = TournamentGame.ELEMENT_BACKGROUND_COLOUR,
+                    Colour = bgColour ?? TournamentGame.ELEMENT_BACKGROUND_COLOUR,
                     RelativeSizeAxes = Axes.Both,
                 },
                 Text = new TournamentSpriteText
                 {
-                    Colour = TournamentGame.ELEMENT_FOREGROUND_COLOUR,
-                    Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.SemiBold, size: 50),
+                    Colour = textColour ?? TournamentGame.ELEMENT_FOREGROUND_COLOUR,
+                    Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Medium, size: 50, italics: true),
                     Padding = new MarginPadding { Left = 10, Right = 20 },
                     Text = text
                 }

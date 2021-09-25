@@ -4,9 +4,11 @@
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Game.Graphics;
 using osu.Game.Tournament.Components;
 using osu.Game.Tournament.Models;
 using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Tournament.Screens.Gameplay.Components
 {
@@ -78,7 +80,7 @@ namespace osu.Game.Tournament.Screens.Gameplay.Components
                                         Anchor = anchor,
                                         Children = new Drawable[]
                                         {
-                                            new DrawableTeamHeader(colour)
+                                            new DrawableTeamHeader(colour, false)
                                             {
                                                 Scale = new Vector2(0.75f),
                                                 Origin = anchor,
@@ -91,7 +93,7 @@ namespace osu.Game.Tournament.Screens.Gameplay.Components
                                             }
                                         }
                                     },
-                                    new TournamentSpriteTextWithBackground(team?.FullName.Value ?? "???")
+                                    new TeamName(team)
                                     {
                                         Scale = new Vector2(0.5f),
                                         Origin = anchor,
@@ -103,6 +105,15 @@ namespace osu.Game.Tournament.Screens.Gameplay.Components
                     },
                 }
             };
+        }
+
+        private class TeamName : TournamentSpriteTextWithBackground
+        {
+            public TeamName(TournamentTeam team)
+                : base(team?.FullName.Value ?? "???", Color4.Transparent, Color4.White)
+            {
+                Text.Font = Text.Font.With(weight: FontWeight.Black);
+            }
         }
 
         protected override void LoadComplete()
