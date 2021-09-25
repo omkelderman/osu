@@ -185,10 +185,8 @@ namespace osu.Game.Tournament.Screens.TeamIntro
                 {
                     FillFlowContainer row;
 
-                    const float angle = 22.5f;
                     const int container_height = 16;
-                    var tan = MathF.Tan(angle * MathF.PI / 180);
-                    var extraW = tan * container_height;
+                    var extraW = EgtsConstants.ParallelogramAngleTanVale * container_height;
 
                     InternalChildren = new Drawable[]
                     {
@@ -216,7 +214,7 @@ namespace osu.Game.Tournament.Screens.TeamIntro
                         {
                             new Box
                             {
-                                Shear = new Vector2(tan, 0),
+                                Shear = new Vector2(EgtsConstants.ParallelogramAngleTanVale, 0),
                                 RelativeSizeAxes = Axes.Both,
                                 Colour = Color4Extensions.FromHex("#ffc63b"),
                             },
