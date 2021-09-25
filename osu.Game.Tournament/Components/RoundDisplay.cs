@@ -4,6 +4,7 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Graphics;
+using osu.Game.Graphics.Sprites;
 using osu.Game.Tournament.Models;
 
 namespace osu.Game.Tournament.Components
@@ -29,12 +30,12 @@ namespace osu.Game.Tournament.Components
                             Anchor = Anchor.TopLeft,
                             Origin = Anchor.TopLeft,
                         },
-                        new TournamentSpriteText
+                        new OsuSpriteText
                         {
                             Anchor = Anchor.TopLeft,
                             Origin = Anchor.TopLeft,
-                            Text = match.Round.Value?.Name.Value ?? "Unknown Round",
-                            Font = OsuFont.Torus.With(size: 26, weight: FontWeight.SemiBold)
+                            Text = (match.Round.Value?.Name.Value ?? "Unknown Round").ToUpperInvariant(),
+                            Font = EgtsFont.RedHatDisplay.With(size: 26, weight: FontWeight.Medium, italics: true)
                         },
                     }
                 }

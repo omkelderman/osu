@@ -5,7 +5,9 @@ using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.Textures;
+using osu.Game.Graphics;
 using osu.Game.Tournament.Models;
+using osuTK.Graphics;
 
 namespace osu.Game.Tournament.Components
 {
@@ -19,6 +21,9 @@ namespace osu.Game.Tournament.Components
         public DrawableTeamTitle(TournamentTeam team)
         {
             this.team = team;
+            Text.Font = Text.Font.With(weight: FontWeight.Black, italics: true);
+            Text.Colour = Color4.White;
+            Background.Colour = Color4.Transparent;
         }
 
         [BackgroundDependencyLoader]

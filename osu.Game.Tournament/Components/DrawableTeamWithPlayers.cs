@@ -5,6 +5,7 @@ using System.Linq;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Graphics;
+using osu.Game.Graphics.Sprites;
 using osu.Game.Tournament.Models;
 using osu.Game.Users;
 using osuTK;
@@ -54,11 +55,11 @@ namespace osu.Game.Tournament.Components
                 },
             };
 
-            TournamentSpriteText createPlayerText(User p) =>
-                new TournamentSpriteText
+            static OsuSpriteText createPlayerText(User p) =>
+                new OsuSpriteText
                 {
                     Text = p.Username,
-                    Font = OsuFont.Torus.With(size: 24, weight: FontWeight.SemiBold),
+                    Font = EgtsFont.RedHatDisplay.With(size: 24, weight: FontWeight.Bold, italics: true),
                     Colour = Color4.White,
                 };
         }

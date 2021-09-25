@@ -3,10 +3,12 @@
 
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Platform;
 using osu.Game.Graphics;
+using osu.Game.Graphics.Sprites;
 using osu.Game.Tournament.Components;
 using osu.Game.Tournament.Models;
 using osuTK;
@@ -109,10 +111,11 @@ namespace osu.Game.Tournament.Screens.TeamWin
                         {
                             Margin = new MarginPadding { Bottom = 30 },
                         },
-                        new TournamentSpriteText
+                        new OsuSpriteText
                         {
                             Text = "WINNER",
-                            Font = OsuFont.Torus.With(size: 100, weight: FontWeight.Bold),
+                            Font = EgtsFont.RedHatDisplay.With(size: 100, weight: FontWeight.Black, italics: true),
+                            Colour = match.WinnerColour == TeamColour.Red ? Color4Extensions.FromHex("#ec8b55") : Color4Extensions.FromHex("#84d1f7"),
                             Margin = new MarginPadding { Bottom = 50 },
                         },
                         new DrawableTeamWithPlayers(match.Winner, match.WinnerColour)

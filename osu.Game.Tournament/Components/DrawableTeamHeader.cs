@@ -1,6 +1,7 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using osu.Game.Graphics;
 using osu.Game.Tournament.Models;
 using osuTK;
 
@@ -14,6 +15,7 @@ namespace osu.Game.Tournament.Components
 
             Text.Colour = TournamentGame.TEXT_COLOUR;
             Text.Text = $"Team {colour}".ToUpperInvariant();
+            Text.Font = Text.Font.With(weight: FontWeight.Medium, italics: true);
             Text.Scale = new Vector2(0.6f);
         }
     }
