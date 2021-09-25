@@ -6,6 +6,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Graphics;
+using osu.Game.Graphics.Sprites;
 using osu.Game.Tournament.Models;
 
 namespace osu.Game.Tournament.Screens.Ladder.Components
@@ -20,8 +21,8 @@ namespace osu.Game.Tournament.Screens.Ladder.Components
 
         public DrawableTournamentRound(TournamentRound round, bool losers = false)
         {
-            TournamentSpriteText textName;
-            TournamentSpriteText textDescription;
+            OsuSpriteText textName;
+            OsuSpriteText textDescription;
 
             AutoSizeAxes = Axes.Both;
             InternalChild = new FillFlowContainer
@@ -30,15 +31,16 @@ namespace osu.Game.Tournament.Screens.Ladder.Components
                 AutoSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
-                    textDescription = new TournamentSpriteText
+                    textDescription = new OsuSpriteText
                     {
                         Colour = TournamentGame.TEXT_COLOUR,
+                        Font = EgtsFont.RedHatDisplay.With(italics: true),
                         Origin = Anchor.TopCentre,
                         Anchor = Anchor.TopCentre
                     },
-                    textName = new TournamentSpriteText
+                    textName = new OsuSpriteText
                     {
-                        Font = OsuFont.Torus.With(weight: FontWeight.Bold),
+                        Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Bold, italics: true),
                         Colour = TournamentGame.TEXT_COLOUR,
                         Origin = Anchor.TopCentre,
                         Anchor = Anchor.TopCentre
