@@ -1,6 +1,8 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using System;
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -8,6 +10,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Platform;
 using osu.Framework.Threading;
+using osu.Game.Beatmaps;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays.Settings;
 using osu.Game.Tournament.Components;
@@ -36,6 +39,9 @@ namespace osu.Game.Tournament.Screens.Gameplay
 
         private Drawable chroma;
 
+        private TourneyVideo gameplayVideo;
+        private TourneyVideo gameplayTbVideo;
+
         [BackgroundDependencyLoader]
         private void load(LadderInfo ladder, MatchIPCInfo ipc, Storage storage)
         {
@@ -43,10 +49,17 @@ namespace osu.Game.Tournament.Screens.Gameplay
 
             AddRangeInternal(new Drawable[]
             {
-                new TourneyVideo("gameplay")
+                gameplayVideo = new TourneyVideo("gameplay")
                 {
                     Loop = true,
                     RelativeSizeAxes = Axes.Both,
+                    Alpha = 1
+                },
+                gameplayTbVideo = new TourneyVideo("gameplay-tb")
+                {
+                    Loop = true,
+                    RelativeSizeAxes = Axes.Both,
+                    Alpha = 0
                 },
                 header = new MatchHeader
                 {
@@ -139,6 +152,8 @@ namespace osu.Game.Tournament.Screens.Gameplay
 
             State.BindTo(ipc.State);
             State.BindValueChanged(stateChanged, true);
+
+            ipc.Beatmap.BindValueChanged(beatmapChanged, true);
         }
 
         protected override void CurrentMatchChanged(ValueChangedEvent<TournamentMatch> match)
@@ -150,6 +165,27 @@ namespace osu.Game.Tournament.Screens.Gameplay
 
             warmup.Value = match.NewValue.Team1Score.Value + match.NewValue.Team2Score.Value == 0;
             scheduledOperation?.Cancel();
+        }
+
+        private void beatmapChanged(ValueChangedEvent<BeatmapInfo> beatmap)
+        {
+            if (beatmap.NewValue == null || CurrentMatch.Value == null)
+                return;
+
+            var currentSelectedBeatmapMods = CurrentMatch.Value.Round.Value.Beatmaps.FirstOrDefault(b => b.ID == beatmap.NewValue.OnlineBeatmapID)?.Mods;
+
+            if ("TB".Equals(currentSelectedBeatmapMods, StringComparison.OrdinalIgnoreCase))
+            {
+                // current map is from TB pool
+                gameplayVideo.Alpha = 0;
+                gameplayTbVideo.Alpha = 1;
+            }
+            else
+            {
+                // current map is not from TB pool
+                gameplayVideo.Alpha = 1;
+                gameplayTbVideo.Alpha = 0;
+            }
         }
 
         private ScheduledDelegate scheduledOperation;
