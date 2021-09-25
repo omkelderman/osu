@@ -249,7 +249,7 @@ namespace osu.Game.Tournament.Components
 
                 static void cp(SpriteText s, bool bold)
                 {
-                    s.Font = OsuFont.Torus.With(weight: bold ? FontWeight.Bold : FontWeight.Regular, size: 15);
+                    s.Font = EgtsFont.RedHatDisplay.With(weight: bold ? FontWeight.Black : FontWeight.Regular, size: 17);
                 }
 
                 for (var i = 0; i < tuples.Length; i++)
@@ -265,9 +265,8 @@ namespace osu.Game.Tournament.Components
                         });
                     }
 
-                    AddText(new TournamentSpriteText { Text = heading }, s => cp(s, false));
-                    AddText(" ", s => cp(s, false));
-                    AddText(new TournamentSpriteText { Text = content }, s => cp(s, true));
+                    AddText($"{heading} ", s => cp(s, false));
+                    AddText(content, s => cp(s, true));
                 }
             }
         }
