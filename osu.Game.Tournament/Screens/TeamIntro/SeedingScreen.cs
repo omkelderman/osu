@@ -1,8 +1,10 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using System;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -141,9 +143,9 @@ namespace osu.Game.Tournament.Screens.TeamIntro
                             Spacing = new Vector2(5),
                             Children = new Drawable[]
                             {
-                                new TournamentSpriteText { Text = beatmap.BeatmapInfo.Metadata.Title, Colour = TournamentGame.TEXT_COLOUR, },
-                                new TournamentSpriteText { Text = "by", Colour = TournamentGame.TEXT_COLOUR, Font = OsuFont.Torus.With(weight: FontWeight.Regular) },
-                                new TournamentSpriteText { Text = beatmap.BeatmapInfo.Metadata.Artist, Colour = TournamentGame.TEXT_COLOUR, Font = OsuFont.Torus.With(weight: FontWeight.Regular) },
+                                new OsuSpriteText { Text = beatmap.BeatmapInfo.Metadata.Title, Colour = TournamentGame.TEXT_COLOUR, Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Medium) },
+                                new OsuSpriteText { Text = "by", Colour = TournamentGame.TEXT_COLOUR, Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Medium) },
+                                new OsuSpriteText { Text = beatmap.BeatmapInfo.Metadata.Artist, Colour = TournamentGame.TEXT_COLOUR, Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Medium) },
                             }
                         },
                         new FillFlowContainer
@@ -155,8 +157,8 @@ namespace osu.Game.Tournament.Screens.TeamIntro
                             Spacing = new Vector2(40),
                             Children = new Drawable[]
                             {
-                                new TournamentSpriteText { Text = beatmap.Score.ToString("#,0"), Colour = TournamentGame.TEXT_COLOUR, Width = 80 },
-                                new TournamentSpriteText { Text = "#" + beatmap.Seed.Value.ToString("#,0"), Colour = TournamentGame.TEXT_COLOUR, Font = OsuFont.Torus.With(weight: FontWeight.Regular) },
+                                new OsuSpriteText { Text = beatmap.Score.ToString("#,0"), Colour = TournamentGame.TEXT_COLOUR, Width = 80, Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Medium) },
+                                new OsuSpriteText { Text = "#" + beatmap.Seed.Value.ToString("#,0"), Colour = TournamentGame.TEXT_COLOUR, Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Medium) },
                             }
                         },
                     };
@@ -183,13 +185,18 @@ namespace osu.Game.Tournament.Screens.TeamIntro
                 {
                     FillFlowContainer row;
 
+                    const float angle = 22.5f;
+                    const int container_height = 16;
+                    var tan = MathF.Tan(angle * MathF.PI / 180);
+                    var extraW = tan * container_height;
+
                     InternalChildren = new Drawable[]
                     {
                         row = new FillFlowContainer
                         {
                             AutoSizeAxes = Axes.Both,
                             Direction = FillDirection.Horizontal,
-                            Spacing = new Vector2(5),
+                            Spacing = new Vector2(5 + extraW, 5),
                         },
                     };
 
@@ -204,22 +211,26 @@ namespace osu.Game.Tournament.Screens.TeamIntro
 
                     row.Add(new Container
                     {
-                        Size = new Vector2(50, 16),
-                        CornerRadius = 10,
-                        Masking = true,
+                        Size = new Vector2(50, container_height),
                         Children = new Drawable[]
                         {
                             new Box
                             {
+                                Shear = new Vector2(tan, 0),
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = TournamentGame.ELEMENT_BACKGROUND_COLOUR,
+                                Colour = Color4Extensions.FromHex("#ffc63b"),
                             },
-                            new TournamentSpriteText
+                            new OsuSpriteText
                             {
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
+                                // technically we only need half the padding here since we wanna move it half that side,
+                                // but since the text is centered only half of that will be applied so we double it again lol
+                                // omega hacky I know, dont care it works
+                                Padding = new MarginPadding { Right = extraW },
                                 Text = seeding.ToString("#,0"),
-                                Colour = TournamentGame.ELEMENT_FOREGROUND_COLOUR
+                                Colour = Color4Extensions.FromHex("#4D358F"),
+                                Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Bold)
                             },
                         }
                     });
@@ -272,7 +283,7 @@ namespace osu.Game.Tournament.Screens.TeamIntro
                         {
                             Text = left,
                             Colour = TournamentGame.TEXT_COLOUR,
-                            Font = OsuFont.Torus.With(size: 22, weight: FontWeight.SemiBold),
+                            Font = EgtsFont.RedHatDisplay.With(size: 22, weight: FontWeight.Bold),
                         },
                         new TournamentSpriteText
                         {
@@ -280,7 +291,7 @@ namespace osu.Game.Tournament.Screens.TeamIntro
                             Colour = TournamentGame.TEXT_COLOUR,
                             Anchor = Anchor.TopRight,
                             Origin = Anchor.TopLeft,
-                            Font = OsuFont.Torus.With(size: 22, weight: FontWeight.Regular),
+                            Font = EgtsFont.RedHatDisplay.With(size: 22, weight: FontWeight.Medium),
                         },
                     };
                 }
@@ -307,7 +318,7 @@ namespace osu.Game.Tournament.Screens.TeamIntro
                             new OsuSpriteText
                             {
                                 Text = team?.FullName.Value ?? "???",
-                                Font = OsuFont.Torus.With(size: 32, weight: FontWeight.SemiBold),
+                                Font = EgtsFont.RedHatDisplay.With(size: 32, weight: FontWeight.Black),
                                 Colour = TournamentGame.TEXT_COLOUR,
                             },
                         }
