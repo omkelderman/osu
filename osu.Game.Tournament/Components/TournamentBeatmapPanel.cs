@@ -78,7 +78,7 @@ namespace osu.Game.Tournament.Components
                             Text = new RomanisableString(
                                 $"{Beatmap.Metadata.ArtistUnicode ?? Beatmap.Metadata.Artist} - {Beatmap.Metadata.TitleUnicode ?? Beatmap.Metadata.Title}",
                                 $"{Beatmap.Metadata.Artist} - {Beatmap.Metadata.Title}"),
-                            Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Bold),
+                            Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Black),
                         },
                         new FillFlowContainer
                         {
@@ -90,24 +90,24 @@ namespace osu.Game.Tournament.Components
                                 {
                                     Text = "mapper",
                                     Padding = new MarginPadding { Right = 5 },
-                                    Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Regular, size: 14)
+                                    Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Medium, size: 14)
                                 },
                                 new OsuSpriteText
                                 {
                                     Text = Beatmap.Metadata.AuthorString,
                                     Padding = new MarginPadding { Right = 20 },
-                                    Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Bold, size: 14)
+                                    Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Black, size: 14)
                                 },
                                 new OsuSpriteText
                                 {
                                     Text = "difficulty",
                                     Padding = new MarginPadding { Right = 5 },
-                                    Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Regular, size: 14)
+                                    Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Medium, size: 14)
                                 },
                                 new OsuSpriteText
                                 {
                                     Text = Beatmap.Version,
-                                    Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Bold, size: 14)
+                                    Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Black, size: 14)
                                 },
                             }
                         }
