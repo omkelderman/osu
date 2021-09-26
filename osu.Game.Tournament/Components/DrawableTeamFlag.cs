@@ -9,6 +9,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Game.Tournament.Models;
+using osu.Game.Users.Drawables;
 using osuTK;
 
 namespace osu.Game.Tournament.Components
@@ -21,6 +22,7 @@ namespace osu.Game.Tournament.Components
         private Bindable<string> flag;
 
         private Sprite flagSprite;
+        private UpdateableAvatar userAvatar;
 
         public DrawableTeamFlag(TournamentTeam team)
         {
@@ -35,15 +37,48 @@ namespace osu.Game.Tournament.Components
             Size = new Vector2(75, 50);
             Masking = true;
             CornerRadius = 5;
-            Child = flagSprite = new Sprite
+
+            Children = new Drawable[]
             {
-                RelativeSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                FillMode = FillMode.Fill
+                flagSprite = new Sprite
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    FillMode = FillMode.Fill
+                },
+                userAvatar = new UpdateableAvatar(isInteractive: false)
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    FillMode = FillMode.Fill
+                }
             };
 
-            (flag = team.FlagName.GetBoundCopy()).BindValueChanged(acronym => flagSprite.Texture = textures.Get($@"Flags/{team.FlagName}"), true);
+            void refreshFlag()
+            {
+                if (team.Players.Count == 1)
+                {
+                    var firstUser = team.Players[0];
+
+                    if (userAvatar.User?.Id != firstUser.Id)
+                    {
+                        userAvatar.User = firstUser;
+                    }
+
+                    flagSprite.Alpha = 0;
+                    userAvatar.Alpha = 1;
+                }
+                else
+                {
+                    flagSprite.Texture = textures.Get($@"Flags/{team.FlagName}");
+                    flagSprite.Alpha = 1;
+                    userAvatar.Alpha = 0;
+                }
+            }
+
+            (flag = team.FlagName.GetBoundCopy()).BindValueChanged(_ => refreshFlag(), true);
         }
     }
 }
