@@ -2,18 +2,20 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Platform;
 using osu.Framework.Threading;
 using osu.Game.Beatmaps;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays.Settings;
 using osu.Game.Tournament.Components;
+using osu.Game.Tournament.IO;
 using osu.Game.Tournament.IPC;
 using osu.Game.Tournament.Models;
 using osu.Game.Tournament.Screens.Gameplay.Components;
@@ -39,27 +41,39 @@ namespace osu.Game.Tournament.Screens.Gameplay
 
         private Drawable chroma;
 
-        private TourneyVideo gameplayVideo;
-        private TourneyVideo gameplayTbVideo;
+        private TourneyVideo fallbackGameplayVideo;
+        private readonly List<(string, TourneyVideo)> modSpecificGameplayVideos = new List<(string, TourneyVideo)>();
 
         [BackgroundDependencyLoader]
-        private void load(LadderInfo ladder, MatchIPCInfo ipc, Storage storage)
+        private void load(LadderInfo ladder, MatchIPCInfo ipc, TournamentStorage storage)
         {
             this.ipc = ipc;
 
-            AddRangeInternal(new Drawable[]
+            var vids = new List<TourneyVideo>();
+
+            foreach (var name in storage.GetFiles("videos", "gameplay-*").Select(x1 => Path.GetFileNameWithoutExtension(x1[("videos".Length + 1)..])))
             {
-                gameplayVideo = new TourneyVideo("gameplay")
-                {
-                    Loop = true,
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 1
-                },
-                gameplayTbVideo = new TourneyVideo("gameplay-tb")
+                var vid = new TourneyVideo(name)
                 {
                     Loop = true,
                     RelativeSizeAxes = Axes.Both,
                     Alpha = 0
+                };
+                vids.Add(vid);
+                modSpecificGameplayVideos.Add((name["gameplay-".Length..], vid));
+            }
+
+            AddRangeInternal(new Drawable[]
+            {
+                fallbackGameplayVideo = new TourneyVideo("gameplay")
+                {
+                    Loop = true,
+                    RelativeSizeAxes = Axes.Both,
+                },
+                new Container<TourneyVideo>()
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Children = vids
                 },
                 header = new MatchHeader
                 {
@@ -174,18 +188,22 @@ namespace osu.Game.Tournament.Screens.Gameplay
 
             var currentSelectedBeatmapMods = CurrentMatch.Value.Round.Value.Beatmaps.FirstOrDefault(b => b.ID == beatmap.NewValue.OnlineBeatmapID)?.Mods;
 
-            if ("TB".Equals(currentSelectedBeatmapMods, StringComparison.OrdinalIgnoreCase))
+            float fallbackVidAlpha = 1f;
+
+            foreach (var (mod, vid) in modSpecificGameplayVideos)
             {
-                // current map is from TB pool
-                gameplayVideo.Alpha = 0;
-                gameplayTbVideo.Alpha = 1;
+                if (string.Equals(mod, currentSelectedBeatmapMods, StringComparison.OrdinalIgnoreCase))
+                {
+                    vid.Alpha = 1;
+                    fallbackVidAlpha = 0;
+                }
+                else
+                {
+                    vid.Alpha = 0;
+                }
             }
-            else
-            {
-                // current map is not from TB pool
-                gameplayVideo.Alpha = 1;
-                gameplayTbVideo.Alpha = 0;
-            }
+
+            fallbackGameplayVideo.Alpha = fallbackVidAlpha;
         }
 
         private ScheduledDelegate scheduledOperation;
