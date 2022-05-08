@@ -772,6 +772,11 @@ namespace osu.Game.Screens.Play
 
             resultsDisplayDelegate = new ScheduledDelegate(() =>
             {
+                if (musicController.IsPlaying)
+                {
+                    return;
+                }
+
                 if (prepareScoreForDisplayTask?.IsCompleted != true)
                     // If the asynchronous preparation has not completed, keep repeating this delegate.
                     return;
