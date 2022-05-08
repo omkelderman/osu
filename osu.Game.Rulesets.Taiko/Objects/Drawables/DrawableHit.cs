@@ -205,16 +205,7 @@ namespace osu.Game.Rulesets.Taiko.Objects.Drawables
                     var flash = (MainPiece.Drawable as CirclePiece)?.FlashBox;
                     flash?.FadeTo(0.9f).FadeOut(300);
 
-                    const float gravity_time = 300;
-                    const float gravity_travel_height = 200;
-
-                    this.ScaleTo(0.8f, gravity_time * 2, Easing.OutQuad);
-
-                    this.MoveToY(-gravity_travel_height, gravity_time, Easing.Out)
-                        .Then()
-                        .MoveToY(gravity_travel_height * 2, gravity_time * 2, Easing.In);
-
-                    this.FadeOut(800);
+                    this.FadeOut();
                     break;
             }
         }

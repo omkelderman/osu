@@ -283,12 +283,6 @@ namespace osu.Game.Rulesets.Taiko.UI
                     break;
 
                 case TaikoDrumRollTickJudgement _:
-                    if (!result.IsHit)
-                        break;
-
-                    var drawableTick = (DrawableDrumRollTick)judgedObject;
-
-                    addDrumRollHit(drawableTick);
                     break;
 
                 default:
@@ -307,9 +301,6 @@ namespace osu.Game.Rulesets.Taiko.UI
                     break;
             }
         }
-
-        private void addDrumRollHit(DrawableDrumRollTick drawableTick) =>
-            drumRollHitContainer.Add(new DrawableFlyingHit(drawableTick));
 
         private void addExplosion(DrawableHitObject drawableObject, HitResult result, HitType type)
         {
