@@ -72,7 +72,7 @@ namespace osu.Game.Screens.Play
 
         private readonly SkinnableTargetContainer mainComponents;
 
-        private IEnumerable<Drawable> hideTargets => new Drawable[] { mainComponents, KeyCounter, topRightElements };
+        private IEnumerable<Drawable> hideTargets => new Drawable[] { mainComponents, topRightElements, bottomRightElements };
 
         public HUDOverlay(DrawableRuleset drawableRuleset, IReadOnlyList<Mod> mods)
         {
