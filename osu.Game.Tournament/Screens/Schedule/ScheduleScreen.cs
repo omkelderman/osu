@@ -11,8 +11,6 @@ using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
-using osu.Framework.Platform;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Tournament.Components;
@@ -77,7 +75,7 @@ namespace osu.Game.Tournament.Screens.Schedule
                                             },
                                             new OsuSpriteText
                                             {
-                                                Text = "2021",
+                                                Text = "2022",
                                                 Colour = Color4Extensions.FromHex("#E70991"),
                                                 Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Black, size: 30, italics: true),
                                             },
