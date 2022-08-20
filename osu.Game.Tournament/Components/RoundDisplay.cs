@@ -4,16 +4,18 @@
 #nullable disable
 
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Tournament.Models;
+using osuTK.Graphics;
 
 namespace osu.Game.Tournament.Components
 {
     public class RoundDisplay : CompositeDrawable
     {
-        public RoundDisplay(TournamentMatch match)
+        public RoundDisplay(TournamentMatch match, ColourInfo? roundTextColour = null)
         {
             AutoSizeAxes = Axes.Y;
             RelativeSizeAxes = Axes.X;
@@ -36,8 +38,11 @@ namespace osu.Game.Tournament.Components
                         {
                             Anchor = Anchor.TopLeft,
                             Origin = Anchor.TopLeft,
+                            Margin = new MarginPadding { Top = 3 },
                             Text = (match.Round.Value?.Name.Value ?? "Unknown Round").ToUpperInvariant(),
-                            Font = EgtsFont.RedHatDisplay.With(size: 26, weight: FontWeight.Medium, italics: true)
+                            Font = EgtsFont.RedHatDisplay.With(size: 26, weight: FontWeight.Medium, italics: true),
+                            Colour = roundTextColour ?? Color4.White,
+                            Shadow = false
                         },
                     }
                 }

@@ -70,12 +70,14 @@ namespace osu.Game.Tournament.Screens.Schedule
                                             new OsuSpriteText
                                             {
                                                 Text = "Expert Global Taiko Showdown ".ToUpperInvariant(),
-                                                Colour = Color4Extensions.FromHex("#fff"),
+                                                Shadow = false,
+                                                Colour = EgtsConstants.TextColor,
                                                 Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Black, size: 30, italics: true),
                                             },
                                             new OsuSpriteText
                                             {
                                                 Text = "2022",
+                                                Shadow = false,
                                                 Colour = Color4Extensions.FromHex("#E70991"),
                                                 Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Black, size: 30, italics: true),
                                             },
@@ -132,7 +134,7 @@ namespace osu.Game.Tournament.Screens.Schedule
                             Direction = FillDirection.Horizontal,
                             Children = new Drawable[]
                             {
-                                new ScheduleContainer("recent matches", colour: Color4Extensions.FromHex("#FFC53B"))
+                                new ScheduleContainer("recent matches")
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     Width = 0.4f,
@@ -143,7 +145,7 @@ namespace osu.Game.Tournament.Screens.Schedule
                                                                .Take(8)
                                                                .Select(p => new ScheduleMatch(p))
                                 },
-                                new ScheduleContainer("upcoming matches", colour: Color4Extensions.FromHex("#FFC53B"))
+                                new ScheduleContainer("upcoming matches")
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     Width = 0.6f,
@@ -303,7 +305,8 @@ namespace osu.Game.Tournament.Screens.Schedule
                             {
                                 Text = title.ToUpperInvariant(),
                                 Padding = new MarginPadding { Left = 10, Right = 20 },
-                                Colour = colour ?? Color4Extensions.FromHex("#fff"),
+                                Colour = colour ?? EgtsConstants.TextColor,
+                                Shadow = false,
                                 Font = EgtsFont.RedHatDisplay.With(weight: weight, size: 25, italics: true),
                             },
                             content = new FillFlowContainer

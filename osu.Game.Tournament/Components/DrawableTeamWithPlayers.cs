@@ -10,7 +10,6 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Tournament.Models;
 using osuTK;
-using osuTK.Graphics;
 
 namespace osu.Game.Tournament.Components
 {
@@ -61,7 +60,7 @@ namespace osu.Game.Tournament.Components
                 {
                     Text = p.Username,
                     Font = EgtsFont.RedHatDisplay.With(size: 24, weight: FontWeight.Bold, italics: true),
-                    Colour = Color4.White,
+                    Colour = EgtsConstants.TextColor
                 };
         }
     }

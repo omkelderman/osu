@@ -35,7 +35,8 @@ namespace osu.Game.Tournament.Screens.Ladder.Components
                 {
                     textDescription = new OsuSpriteText
                     {
-                        Colour = TournamentGame.TEXT_COLOUR,
+                        Colour = EgtsConstants.TextColor,
+                        Shadow = false,
                         Font = EgtsFont.RedHatDisplay.With(italics: true),
                         Origin = Anchor.TopCentre,
                         Anchor = Anchor.TopCentre
@@ -43,7 +44,8 @@ namespace osu.Game.Tournament.Screens.Ladder.Components
                     textName = new OsuSpriteText
                     {
                         Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Bold, italics: true),
-                        Colour = TournamentGame.TEXT_COLOUR,
+                        Colour = EgtsConstants.TextColor,
+                        Shadow = false,
                         Origin = Anchor.TopCentre,
                         Anchor = Anchor.TopCentre
                     },

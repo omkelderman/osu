@@ -20,10 +20,11 @@ namespace osu.Game.Tournament.Components
         private Bindable<string> acronym;
 
         public DrawableTeamTitle(TournamentTeam team)
-            : base(bgColour: Color4.Transparent, textColour: Color4.White)
+            : base(bgColour: Color4.Transparent, textColour: EgtsConstants.TextColor)
         {
             this.team = team;
             Text.Font = Text.Font.With(weight: FontWeight.Black);
+            Text.Shadow = false;
         }
 
         [BackgroundDependencyLoader]

@@ -116,7 +116,7 @@ namespace osu.Game.Tournament.Screens.Gameplay.Components
         private class TeamName : TournamentSpriteTextWithBackground
         {
             public TeamName(TournamentTeam team)
-                : base(team?.FullName.Value ?? "???", Color4.Transparent, Color4.White)
+                : base(team?.FullName.Value ?? "???", Color4.Transparent, EgtsConstants.TextColor)
             {
                 Text.Font = Text.Font.With(weight: FontWeight.Black);
             }

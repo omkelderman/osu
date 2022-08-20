@@ -108,13 +108,14 @@ namespace osu.Game.Tournament.Screens.TeamWin
                     X = 260,
                     Children = new Drawable[]
                     {
-                        new RoundDisplay(match)
+                        new RoundDisplay(match, EgtsConstants.TextColor)
                         {
                             Margin = new MarginPadding { Bottom = 30 },
                         },
                         new OsuSpriteText
                         {
                             Text = "WINNER",
+                            Shadow = false,
                             Font = EgtsFont.RedHatDisplay.With(size: 100, weight: FontWeight.Black, italics: true),
                             Colour = match.WinnerColour == TeamColour.Red ? Color4Extensions.FromHex("#ec8b55") : Color4Extensions.FromHex("#84d1f7"),
                             Margin = new MarginPadding { Bottom = 50 },
