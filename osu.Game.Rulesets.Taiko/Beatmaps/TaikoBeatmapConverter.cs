@@ -1,6 +1,8 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+#nullable disable
+
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
@@ -10,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Utils;
 using System.Threading;
+using JetBrains.Annotations;
 using osu.Game.Audio;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Beatmaps.Formats;
@@ -46,16 +49,15 @@ namespace osu.Game.Rulesets.Taiko.Beatmaps
 
         protected override Beatmap<TaikoHitObject> ConvertBeatmap(IBeatmap original, CancellationToken cancellationToken)
         {
-            if (!(original.BeatmapInfo.BaseDifficulty is TaikoMutliplierAppliedDifficulty))
+            if (!(original.Difficulty is TaikoMultiplierAppliedDifficulty))
             {
                 // Rewrite the beatmap info to add the slider velocity multiplier
-                original.BeatmapInfo = original.BeatmapInfo.Clone();
-                original.BeatmapInfo.BaseDifficulty = new TaikoMutliplierAppliedDifficulty(original.BeatmapInfo.BaseDifficulty);
+                original.Difficulty = new TaikoMultiplierAppliedDifficulty(original.Difficulty);
             }
 
             Beatmap<TaikoHitObject> converted = base.ConvertBeatmap(original, cancellationToken);
 
-            if (original.BeatmapInfo.RulesetID == 3)
+            if (original.BeatmapInfo.Ruleset.OnlineID == 3)
             {
                 // Post processing step to transform mania hit objects with the same start time into strong hits
                 converted.HitObjects = converted.HitObjects.GroupBy(t => t.StartTime).Select(x =>
@@ -79,9 +81,9 @@ namespace osu.Game.Rulesets.Taiko.Beatmaps
             {
                 case IHasDistance distanceData:
                 {
-                    if (shouldConvertSliderToHits(obj, beatmap, distanceData, out var taikoDuration, out var tickSpacing))
+                    if (shouldConvertSliderToHits(obj, beatmap, distanceData, out int taikoDuration, out double tickSpacing))
                     {
-                        List<IList<HitSampleInfo>> allSamples = obj is IHasPathWithRepeats curveData ? curveData.NodeSamples : new List<IList<HitSampleInfo>>(new[] { samples });
+                        IList<IList<HitSampleInfo>> allSamples = obj is IHasPathWithRepeats curveData ? curveData.NodeSamples : new List<IList<HitSampleInfo>>(new[] { samples });
 
                         int i = 0;
 
@@ -108,7 +110,7 @@ namespace osu.Game.Rulesets.Taiko.Beatmaps
                             StartTime = obj.StartTime,
                             Samples = obj.Samples,
                             Duration = taikoDuration,
-                            TickRate = beatmap.BeatmapInfo.BaseDifficulty.SliderTickRate == 3 ? 3 : 4
+                            TickRate = beatmap.Difficulty.SliderTickRate == 3 ? 3 : 4
                         };
                     }
 
@@ -117,7 +119,7 @@ namespace osu.Game.Rulesets.Taiko.Beatmaps
 
                 case IHasDuration endTimeData:
                 {
-                    double hitMultiplier = BeatmapDifficulty.DifficultyRange(beatmap.BeatmapInfo.BaseDifficulty.OverallDifficulty, 3, 5, 7.5) * swell_hit_multiplier;
+                    double hitMultiplier = IBeatmapDifficultyInfo.DifficultyRange(beatmap.Difficulty.OverallDifficulty, 3, 5, 7.5) * swell_hit_multiplier;
 
                     yield return new Swell
                     {
@@ -154,7 +156,7 @@ namespace osu.Game.Rulesets.Taiko.Beatmaps
             double distance = distanceData.Distance * spans * LegacyBeatmapEncoder.LEGACY_TAIKO_VELOCITY_MULTIPLIER;
 
             TimingControlPoint timingPoint = beatmap.ControlPointInfo.TimingPointAt(obj.StartTime);
-            DifficultyControlPoint difficultyPoint = beatmap.ControlPointInfo.DifficultyPointAt(obj.StartTime);
+            DifficultyControlPoint difficultyPoint = obj.DifficultyControlPoint;
 
             double beatLength;
 #pragma warning disable 618
@@ -162,12 +164,12 @@ namespace osu.Game.Rulesets.Taiko.Beatmaps
 #pragma warning restore 618
                 beatLength = timingPoint.BeatLength * legacyDifficultyPoint.BpmMultiplier;
             else
-                beatLength = timingPoint.BeatLength / difficultyPoint.SpeedMultiplier;
+                beatLength = timingPoint.BeatLength / difficultyPoint.SliderVelocity;
 
-            double sliderScoringPointDistance = osu_base_scoring_distance * beatmap.BeatmapInfo.BaseDifficulty.SliderMultiplier / beatmap.BeatmapInfo.BaseDifficulty.SliderTickRate;
+            double sliderScoringPointDistance = osu_base_scoring_distance * beatmap.Difficulty.SliderMultiplier / beatmap.Difficulty.SliderTickRate;
 
             // The velocity and duration of the taiko hit object - calculated as the velocity of a drum roll.
-            double taikoVelocity = sliderScoringPointDistance * beatmap.BeatmapInfo.BaseDifficulty.SliderTickRate;
+            double taikoVelocity = sliderScoringPointDistance * beatmap.Difficulty.SliderTickRate;
             taikoDuration = (int)(distance / taikoVelocity * beatLength);
 
             if (isForCurrentRuleset)
@@ -183,7 +185,7 @@ namespace osu.Game.Rulesets.Taiko.Beatmaps
                 beatLength = timingPoint.BeatLength;
 
             // If the drum roll is to be split into hit circles, assume the ticks are 1/8 spaced within the duration of one beat
-            tickSpacing = Math.Min(beatLength / beatmap.BeatmapInfo.BaseDifficulty.SliderTickRate, (double)taikoDuration / spans);
+            tickSpacing = Math.Min(beatLength / beatmap.Difficulty.SliderTickRate, (double)taikoDuration / spans);
 
             return tickSpacing > 0
                    && distance / osuVelocity * 1000 < 2 * beatLength;
@@ -191,13 +193,40 @@ namespace osu.Game.Rulesets.Taiko.Beatmaps
 
         protected override Beatmap<TaikoHitObject> CreateBeatmap() => new TaikoBeatmap();
 
-        private class TaikoMutliplierAppliedDifficulty : BeatmapDifficulty
+        // Important to note that this is subclassing a realm object.
+        // Realm doesn't allow this, but for now this can work since we aren't (in theory?) persisting this to the database.
+        // It is only used during beatmap conversion and processing.
+        internal class TaikoMultiplierAppliedDifficulty : BeatmapDifficulty
         {
-            public TaikoMutliplierAppliedDifficulty(BeatmapDifficulty difficulty)
+            public TaikoMultiplierAppliedDifficulty(IBeatmapDifficultyInfo difficulty)
             {
-                difficulty.CopyTo(this);
-                SliderMultiplier *= LegacyBeatmapEncoder.LEGACY_TAIKO_VELOCITY_MULTIPLIER;
+                CopyFrom(difficulty);
             }
+
+            [UsedImplicitly]
+            public TaikoMultiplierAppliedDifficulty()
+            {
+            }
+
+            #region Overrides of BeatmapDifficulty
+
+            public override BeatmapDifficulty Clone() => new TaikoMultiplierAppliedDifficulty(this);
+
+            public override void CopyTo(BeatmapDifficulty other)
+            {
+                base.CopyTo(other);
+                if (!(other is TaikoMultiplierAppliedDifficulty))
+                    other.SliderMultiplier /= LegacyBeatmapEncoder.LEGACY_TAIKO_VELOCITY_MULTIPLIER;
+            }
+
+            public override void CopyFrom(IBeatmapDifficultyInfo other)
+            {
+                base.CopyFrom(other);
+                if (!(other is TaikoMultiplierAppliedDifficulty))
+                    SliderMultiplier *= LegacyBeatmapEncoder.LEGACY_TAIKO_VELOCITY_MULTIPLIER;
+            }
+
+            #endregion
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+#nullable disable
+
 using System;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -52,13 +54,13 @@ namespace osu.Game.Rulesets.Osu.UI.Cursor
         }
 
         [Resolved(canBeNull: true)]
-        private GameplayBeatmap beatmap { get; set; }
+        private GameplayState state { get; set; }
 
         [Resolved]
         private OsuConfigManager config { get; set; }
 
         [BackgroundDependencyLoader(true)]
-        private void load(OsuConfigManager config, OsuRulesetConfigManager rulesetConfig)
+        private void load(OsuRulesetConfigManager rulesetConfig)
         {
             rulesetConfig?.BindWith(OsuRulesetSetting.ShowCursorTrail, showTrail);
         }
@@ -96,10 +98,10 @@ namespace osu.Game.Rulesets.Osu.UI.Cursor
         {
             float scale = userCursorScale.Value;
 
-            if (autoCursorScale.Value && beatmap != null)
+            if (autoCursorScale.Value && state != null)
             {
                 // if we have a beatmap available, let's get its circle size to figure out an automatic cursor scale modifier.
-                scale *= GetScaleForCircleSize(beatmap.BeatmapInfo.BaseDifficulty.CircleSize);
+                scale *= GetScaleForCircleSize(state.Beatmap.Difficulty.CircleSize);
             }
 
             cursorScale.Value = scale;

@@ -22,7 +22,7 @@ namespace osu.Game.Rulesets.Mods
 
         public override IconUsage? Icon => FontAwesome.Solid.Hammer;
 
-        public override double ScoreMultiplier => 1.0;
+        public override double ScoreMultiplier => 0.5;
 
         public override bool RequiresConfiguration => true;
 
@@ -79,7 +79,7 @@ namespace osu.Game.Rulesets.Mods
             }
         }
 
-        public void ReadFromDifficulty(BeatmapDifficulty difficulty)
+        public void ReadFromDifficulty(IBeatmapDifficultyInfo difficulty)
         {
         }
 

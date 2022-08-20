@@ -1,6 +1,8 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+#nullable disable
+
 using System;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Mania.Mods;
@@ -49,11 +51,11 @@ namespace osu.Game.Rulesets.Mania
 
         public override ScoreProcessor CreateScoreProcessor() => new ManiaScoreProcessor();
 
-        public override HealthProcessor CreateHealthProcessor(double drainStartTime) => new DrainingHealthProcessor(drainStartTime, 0.5);
+        public override HealthProcessor CreateHealthProcessor(double drainStartTime) => new ManiaHealthProcessor(drainStartTime, 0.5);
 
         public override IBeatmapConverter CreateBeatmapConverter(IBeatmap beatmap) => new ManiaBeatmapConverter(beatmap, this);
 
-        public override PerformanceCalculator CreatePerformanceCalculator(DifficultyAttributes attributes, ScoreInfo score) => new ManiaPerformanceCalculator(this, attributes, score);
+        public override PerformanceCalculator CreatePerformanceCalculator() => new ManiaPerformanceCalculator();
 
         public const string SHORT_NAME = "mania";
 
@@ -144,56 +146,56 @@ namespace osu.Game.Rulesets.Mania
             {
                 switch (mod)
                 {
-                    case ManiaModKey1 _:
+                    case ManiaModKey1:
                         value |= LegacyMods.Key1;
                         break;
 
-                    case ManiaModKey2 _:
+                    case ManiaModKey2:
                         value |= LegacyMods.Key2;
                         break;
 
-                    case ManiaModKey3 _:
+                    case ManiaModKey3:
                         value |= LegacyMods.Key3;
                         break;
 
-                    case ManiaModKey4 _:
+                    case ManiaModKey4:
                         value |= LegacyMods.Key4;
                         break;
 
-                    case ManiaModKey5 _:
+                    case ManiaModKey5:
                         value |= LegacyMods.Key5;
                         break;
 
-                    case ManiaModKey6 _:
+                    case ManiaModKey6:
                         value |= LegacyMods.Key6;
                         break;
 
-                    case ManiaModKey7 _:
+                    case ManiaModKey7:
                         value |= LegacyMods.Key7;
                         break;
 
-                    case ManiaModKey8 _:
+                    case ManiaModKey8:
                         value |= LegacyMods.Key8;
                         break;
 
-                    case ManiaModKey9 _:
+                    case ManiaModKey9:
                         value |= LegacyMods.Key9;
                         break;
 
-                    case ManiaModDualStages _:
+                    case ManiaModDualStages:
                         value |= LegacyMods.KeyCoop;
                         break;
 
-                    case ManiaModFadeIn _:
+                    case ManiaModFadeIn:
                         value |= LegacyMods.FadeIn;
                         value &= ~LegacyMods.Hidden; // this is toggled on in the base call due to inheritance, but we don't want that.
                         break;
 
-                    case ManiaModMirror _:
+                    case ManiaModMirror:
                         value |= LegacyMods.Mirror;
                         break;
 
-                    case ManiaModRandom _:
+                    case ManiaModRandom:
                         value |= LegacyMods.Random;
                         break;
                 }
@@ -243,7 +245,8 @@ namespace osu.Game.Rulesets.Mania
                         new ManiaModDifficultyAdjust(),
                         new ManiaModClassic(),
                         new ManiaModInvert(),
-                        new ManiaModConstantSpeed()
+                        new ManiaModConstantSpeed(),
+                        new ManiaModHoldOff()
                     };
 
                 case ModType.Automation:
@@ -257,6 +260,7 @@ namespace osu.Game.Rulesets.Mania
                     {
                         new MultiMod(new ModWindUp(), new ModWindDown()),
                         new ManiaModMuted(),
+                        new ModAdaptiveSpeed()
                     };
 
                 default:
@@ -272,7 +276,7 @@ namespace osu.Game.Rulesets.Mania
 
         public override Drawable CreateIcon() => new SpriteIcon { Icon = OsuIcon.RulesetMania };
 
-        public override DifficultyCalculator CreateDifficultyCalculator(WorkingBeatmap beatmap) => new ManiaDifficultyCalculator(this, beatmap);
+        public override DifficultyCalculator CreateDifficultyCalculator(IWorkingBeatmap beatmap) => new ManiaDifficultyCalculator(RulesetInfo, beatmap);
 
         public int LegacyID => 3;
 
@@ -316,7 +320,7 @@ namespace osu.Game.Rulesets.Mania
 
                 case PlayfieldType.Dual:
                 {
-                    var keys = getDualStageKeyCount(variant);
+                    int keys = getDualStageKeyCount(variant);
                     return $"{keys}K + {keys}K";
                 }
             }
@@ -369,10 +373,10 @@ namespace osu.Game.Rulesets.Mania
             {
                 Columns = new[]
                 {
-                    new StatisticItem("Timing Distribution", new HitEventTimingDistributionGraph(score.HitEvents)
+                    new StatisticItem("Performance Breakdown", () => new PerformanceBreakdownChart(score, playableBeatmap)
                     {
                         RelativeSizeAxes = Axes.X,
-                        Height = 250
+                        AutoSizeAxes = Axes.Y
                     }),
                 }
             },
@@ -380,10 +384,22 @@ namespace osu.Game.Rulesets.Mania
             {
                 Columns = new[]
                 {
-                    new StatisticItem(string.Empty, new SimpleStatisticTable(3, new SimpleStatisticItem[]
+                    new StatisticItem("Timing Distribution", () => new HitEventTimingDistributionGraph(score.HitEvents)
                     {
+                        RelativeSizeAxes = Axes.X,
+                        Height = 250
+                    }, true),
+                }
+            },
+            new StatisticRow
+            {
+                Columns = new[]
+                {
+                    new StatisticItem(string.Empty, () => new SimpleStatisticTable(3, new SimpleStatisticItem[]
+                    {
+                        new AverageHitError(score.HitEvents),
                         new UnstableRate(score.HitEvents)
-                    }))
+                    }), true)
                 }
             }
         };

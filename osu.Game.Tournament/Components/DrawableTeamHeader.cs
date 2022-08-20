@@ -1,6 +1,8 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+#nullable disable
+
 using osu.Framework.Graphics;
 using osu.Game.Tournament.Models;
 using osuTK;
@@ -20,7 +22,7 @@ namespace osu.Game.Tournament.Components
             Background.Shear = EgtsConstants.ShearVector;
 
             // move the background box a bit to the right since the Shear thing extended it to the left
-            var offset = (Text.Font.Size * EgtsConstants.ParallelogramAngleTanVale) / 4;
+            float offset = (Text.Font.Size * EgtsConstants.ParallelogramAngleTanVale) / 4;
             Background.Margin = new MarginPadding { Left = offset };
         }
     }

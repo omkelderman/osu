@@ -1,12 +1,13 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+#nullable disable
+
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Platform;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Tournament.Components;
@@ -15,7 +16,7 @@ using osuTK;
 
 namespace osu.Game.Tournament.Screens.TeamWin
 {
-    public class TeamWinScreen : TournamentMatchScreen, IProvideVideo
+    public class TeamWinScreen : TournamentMatchScreen
     {
         private Container mainContainer;
 
@@ -25,7 +26,7 @@ namespace osu.Game.Tournament.Screens.TeamWin
         private TourneyVideo redWinVideo;
 
         [BackgroundDependencyLoader]
-        private void load(LadderInfo ladder, Storage storage)
+        private void load()
         {
             RelativeSizeAxes = Axes.Both;
 
@@ -67,7 +68,7 @@ namespace osu.Game.Tournament.Screens.TeamWin
 
         private bool firstDisplay = true;
 
-        private void update() => Schedule(() =>
+        private void update() => Scheduler.AddOnce(() =>
         {
             var match = CurrentMatch.Value;
 

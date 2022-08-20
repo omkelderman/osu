@@ -1,11 +1,14 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+#nullable disable
+
 using NUnit.Framework;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Configuration;
+using osu.Game.Overlays.Settings;
 using osuTK;
 
 namespace osu.Game.Tests.Visual.Settings
@@ -53,7 +56,18 @@ namespace osu.Game.Tests.Visual.Settings
             };
 
             [SettingSource("Sample string", "Change something for a mod")]
-            public Bindable<string> StringBindable { get; } = new Bindable<string>();
+            public Bindable<string> StringBindable { get; } = new Bindable<string>
+            {
+                Default = string.Empty,
+                Value = "Sample text"
+            };
+
+            [SettingSource("Sample number textbox", "Textbox number entry", SettingControlType = typeof(SettingsNumberBox))]
+            public Bindable<int?> IntTextBoxBindable { get; } = new Bindable<int?>
+            {
+                Default = null,
+                Value = null
+            };
         }
 
         private enum TestEnum

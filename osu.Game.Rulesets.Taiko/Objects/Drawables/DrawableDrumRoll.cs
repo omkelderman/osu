@@ -1,6 +1,8 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+#nullable disable
+
 using System;
 using System.Linq;
 using JetBrains.Annotations;
@@ -11,6 +13,7 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osuTK.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Primitives;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
@@ -27,6 +30,8 @@ namespace osu.Game.Rulesets.Taiko.Objects.Drawables
         /// Number of rolling hits required to reach the dark/final colour.
         /// </summary>
         private const int rolling_hits_for_engaged_colour = 5;
+
+        public override Quad ScreenSpaceDrawQuad => MainPiece.Drawable.ScreenSpaceDrawQuad;
 
         /// <summary>
         /// Rolling number of tick hits. This increases for hits and decreases for misses.
@@ -195,6 +200,14 @@ namespace osu.Game.Rulesets.Taiko.Objects.Drawables
                     return;
 
                 ApplyResult(r => r.Type = ParentHitObject.IsHit ? r.Judgement.MaxResult : r.Judgement.MinResult);
+            }
+
+            public override void OnKilled()
+            {
+                base.OnKilled();
+
+                if (Time.Current > ParentHitObject.HitObject.GetEndTime() && !Judged)
+                    ApplyResult(r => r.Type = r.Judgement.MinResult);
             }
 
             public override bool OnPressed(KeyBindingPressEvent<TaikoAction> e) => false;

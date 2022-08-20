@@ -1,12 +1,15 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+#nullable disable
+
 using System.Diagnostics;
 using System.Linq;
 using NUnit.Framework;
 using osu.Framework.Testing;
 using osu.Framework.Threading;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays;
 using osu.Game.Overlays.Settings.Sections.Input;
 using osuTK.Input;
@@ -228,6 +231,22 @@ namespace osu.Game.Tests.Visual.Settings
             });
 
             AddAssert("first binding selected", () => multiBindingRow.ChildrenOfType<KeyBindingRow.KeyButton>().First().IsBinding);
+        }
+
+        [Test]
+        public void TestFilteringHidesResetSectionButtons()
+        {
+            SearchTextBox searchTextBox = null;
+
+            AddStep("add any search term", () =>
+            {
+                searchTextBox = panel.ChildrenOfType<SearchTextBox>().Single();
+                searchTextBox.Current.Value = "chat";
+            });
+            AddUntilStep("all reset section bindings buttons hidden", () => panel.ChildrenOfType<ResetButton>().All(button => button.Alpha == 0));
+
+            AddStep("clear search term", () => searchTextBox.Current.Value = string.Empty);
+            AddUntilStep("all reset section bindings buttons shown", () => panel.ChildrenOfType<ResetButton>().All(button => button.Alpha == 1));
         }
 
         private void checkBinding(string name, string keyName)

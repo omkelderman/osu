@@ -1,6 +1,8 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +13,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Threading;
-using osu.Game.Beatmaps;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays.Settings;
 using osu.Game.Tournament.Components;
@@ -25,7 +26,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Tournament.Screens.Gameplay
 {
-    public class GameplayScreen : BeatmapInfoScreen, IProvideVideo
+    public class GameplayScreen : BeatmapInfoScreen
     {
         private readonly BindableBool warmup = new BindableBool();
 
@@ -51,7 +52,7 @@ namespace osu.Game.Tournament.Screens.Gameplay
 
             var vids = new List<TourneyVideo>();
 
-            foreach (var name in storage.GetFiles("videos", "gameplay-*").Select(x1 => Path.GetFileNameWithoutExtension(x1[("videos".Length + 1)..])))
+            foreach (string name in storage.GetFiles("videos", "gameplay-*").Select(x1 => Path.GetFileNameWithoutExtension(x1[("videos".Length + 1)..])))
             {
                 var vid = new TourneyVideo(name)
                 {
@@ -181,12 +182,12 @@ namespace osu.Game.Tournament.Screens.Gameplay
             scheduledOperation?.Cancel();
         }
 
-        private void beatmapChanged(ValueChangedEvent<BeatmapInfo> beatmap)
+        private void beatmapChanged(ValueChangedEvent<TournamentBeatmap> beatmap)
         {
             if (beatmap.NewValue == null || CurrentMatch.Value == null)
                 return;
 
-            var currentSelectedBeatmapMods = CurrentMatch.Value.Round.Value.Beatmaps.FirstOrDefault(b => b.ID == beatmap.NewValue.OnlineBeatmapID)?.Mods;
+            string currentSelectedBeatmapMods = CurrentMatch.Value.Round.Value.Beatmaps.FirstOrDefault(b => b.ID == beatmap.NewValue.OnlineID)?.Mods;
 
             float fallbackVidAlpha = 1f;
 

@@ -1,8 +1,11 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+#nullable disable
+
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Extensions.LocalisationExtensions;
 using osu.Framework.Graphics;
@@ -13,9 +16,9 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Online.API;
+using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Overlays.Profile.Header.Components;
 using osu.Game.Resources.Localisation.Web;
-using osu.Game.Users;
 using osu.Game.Users.Drawables;
 using osuTK;
 
@@ -25,7 +28,7 @@ namespace osu.Game.Overlays.Profile.Header
     {
         private const float avatar_size = 110;
 
-        public readonly Bindable<User> User = new Bindable<User>();
+        public readonly Bindable<APIUser> User = new Bindable<APIUser>();
 
         [Resolved]
         private IAPIProvider api { get; set; }
@@ -133,8 +136,8 @@ namespace osu.Game.Overlays.Profile.Header
                                             {
                                                 userFlag = new UpdateableFlag
                                                 {
-                                                    Size = new Vector2(30, 20),
-                                                    ShowPlaceholderOnNull = false,
+                                                    Size = new Vector2(28, 20),
+                                                    ShowPlaceholderOnUnknown = false,
                                                 },
                                                 userCountryText = new OsuSpriteText
                                                 {
@@ -167,13 +170,13 @@ namespace osu.Game.Overlays.Profile.Header
             User.BindValueChanged(user => updateUser(user.NewValue));
         }
 
-        private void updateUser(User user)
+        private void updateUser(APIUser user)
         {
             avatar.User = user;
             usernameText.Text = user?.Username ?? string.Empty;
             openUserExternally.Link = $@"{api.WebsiteRootUrl}/users/{user?.Id ?? 0}";
-            userFlag.Country = user?.Country;
-            userCountryText.Text = user?.Country?.FullName ?? "Alien";
+            userFlag.CountryCode = user?.CountryCode ?? default;
+            userCountryText.Text = (user?.CountryCode ?? default).GetDescription();
             supporterTag.SupportLevel = user?.SupportLevel ?? 0;
             titleText.Text = user?.Title ?? string.Empty;
             titleText.Colour = Color4Extensions.FromHex(user?.Colour ?? "fff");
