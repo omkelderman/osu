@@ -8,7 +8,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Game.Graphics;
 using osu.Game.Tournament.Models;
-using osuTK.Graphics;
 
 namespace osu.Game.Tournament.Components
 {
@@ -20,11 +19,10 @@ namespace osu.Game.Tournament.Components
         private Bindable<string> acronym;
 
         public DrawableTeamTitle(TournamentTeam team)
-            : base(bgColour: Color4.Transparent, textColour: EgtsConstants.TextColor)
+            : base(textColour: EgtsConstants.TextColor, doShear: true)
         {
             this.team = team;
             Text.Font = Text.Font.With(weight: FontWeight.Black);
-            Text.Shadow = false;
         }
 
         [BackgroundDependencyLoader]

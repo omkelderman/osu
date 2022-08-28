@@ -8,7 +8,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Graphics;
-using osu.Game.Graphics.Sprites;
+using osu.Game.Tournament.Components;
 using osu.Game.Tournament.Models;
 
 namespace osu.Game.Tournament.Screens.Ladder.Components
@@ -23,8 +23,8 @@ namespace osu.Game.Tournament.Screens.Ladder.Components
 
         public DrawableTournamentRound(TournamentRound round, bool losers = false)
         {
-            OsuSpriteText textName;
-            OsuSpriteText textDescription;
+            TournamentSpriteTextWithBackground textName;
+            TournamentSpriteTextWithBackground textDescription;
 
             AutoSizeAxes = Axes.Both;
             InternalChild = new FillFlowContainer
@@ -33,30 +33,24 @@ namespace osu.Game.Tournament.Screens.Ladder.Components
                 AutoSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
-                    textDescription = new OsuSpriteText
+                    textDescription = new TournamentSpriteTextWithBackground(textColour: EgtsConstants.TextColor, font: EgtsFont.RedHatDisplay.With(italics: true), doShear: true)
                     {
-                        Colour = EgtsConstants.TextColor,
-                        Shadow = false,
-                        Font = EgtsFont.RedHatDisplay.With(italics: true),
                         Origin = Anchor.TopCentre,
                         Anchor = Anchor.TopCentre
                     },
-                    textName = new OsuSpriteText
+                    textName = new TournamentSpriteTextWithBackground(textColour: EgtsConstants.TextColor, font: EgtsFont.RedHatDisplay.With(weight: FontWeight.Bold, italics: true), doShear: true)
                     {
-                        Font = EgtsFont.RedHatDisplay.With(weight: FontWeight.Bold, italics: true),
-                        Colour = EgtsConstants.TextColor,
-                        Shadow = false,
                         Origin = Anchor.TopCentre,
                         Anchor = Anchor.TopCentre
-                    },
+                    }
                 }
             };
 
             name = round.Name.GetBoundCopy();
-            name.BindValueChanged(_ => textName.Text = ((losers ? "Losers " : "") + round.Name).ToUpperInvariant(), true);
+            name.BindValueChanged(_ => textName.Text.Text = ((losers ? "Losers " : "") + round.Name).ToUpperInvariant(), true);
 
             description = round.Description.GetBoundCopy();
-            description.BindValueChanged(_ => textDescription.Text = round.Description.Value?.ToUpperInvariant(), true);
+            description.BindValueChanged(_ => textDescription.Text.Text = round.Description.Value?.ToUpperInvariant(), true);
         }
     }
 }
