@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -81,6 +82,7 @@ namespace osu.Game.Tournament.Screens.Drawings
 
             drawingsConfig = new DrawingsConfigManager(storage);
 
+            int teamsPerGroup = drawingsConfig.Get<int>(DrawingsConfig.TeamsPerGroup);
             InternalChildren = new Drawable[]
             {
                 // Main container
@@ -108,7 +110,7 @@ namespace osu.Game.Tournament.Screens.Drawings
                             Lines = 6
                         },
                         // Groups
-                        groupsContainer = new GroupContainer(drawingsConfig.Get<int>(DrawingsConfig.Groups), drawingsConfig.Get<int>(DrawingsConfig.TeamsPerGroup))
+                        groupsContainer = new GroupContainer(drawingsConfig.Get<int>(DrawingsConfig.Groups), teamsPerGroup)
                         {
                             Anchor = Anchor.TopCentre,
                             Origin = Anchor.TopCentre,
@@ -136,9 +138,9 @@ namespace osu.Game.Tournament.Screens.Drawings
                             Anchor = Anchor.Centre,
                             Origin = Anchor.TopCentre,
 
-                            Position = new Vector2(0, 45f),
+                            Position = new Vector2(0, 35f),
 
-                            Colour = OsuColour.Gray(0.95f),
+                            Colour = Color4Extensions.FromHex(drawingsConfig.Get<string>(DrawingsConfig.Colour)),
 
                             Alpha = 0,
 
@@ -177,6 +179,13 @@ namespace osu.Game.Tournament.Screens.Drawings
 
                         Text = "Reset",
                         Action = () => reset()
+                    },
+                    new TourneyButton
+                    {
+                        RelativeSizeAxes = Axes.X,
+
+                        Text = "Test",
+                        Action = () => teamsContainer.Test(teamsPerGroup)
                     }
                 }
             };

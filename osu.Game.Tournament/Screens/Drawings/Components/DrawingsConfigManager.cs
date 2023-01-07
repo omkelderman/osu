@@ -14,8 +14,9 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
 
         protected override void InitialiseDefaults()
         {
-            SetDefault(DrawingsConfig.Groups, 8, 1, 8);
+            SetDefault(DrawingsConfig.Groups, 8, 1, 32);
             SetDefault(DrawingsConfig.TeamsPerGroup, 8, 1, 8);
+            SetDefault(DrawingsConfig.Colour, "#eeeeee");
         }
 
         public DrawingsConfigManager(Storage storage)
@@ -27,6 +28,7 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
     public enum DrawingsConfig
     {
         Groups,
-        TeamsPerGroup
+        TeamsPerGroup,
+        Colour
     }
 }

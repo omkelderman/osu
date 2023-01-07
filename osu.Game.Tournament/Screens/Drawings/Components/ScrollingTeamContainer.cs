@@ -230,6 +230,27 @@ namespace osu.Game.Tournament.Screens.Drawings.Components
             setScrollState(ScrollState.Stopping);
         }
 
+        public void Test(int groupSize)
+        {
+            if (availableTeams.Count <= 1) return;
+
+            var list = new List<TournamentTeam>();
+
+            for (int x = 0; x < groupSize; ++x)
+            {
+                for (int i = x; i < availableTeams.Count; i += groupSize)
+                {
+                    list.Add(availableTeams[i]);
+                }
+            }
+
+            foreach (var t in list.Take(list.Count - 1))
+            {
+                OnSelected?.Invoke(t);
+                RemoveTeam(t);
+            }
+        }
+
         protected override void LoadComplete()
         {
             base.LoadComplete();
