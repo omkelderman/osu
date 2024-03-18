@@ -195,12 +195,20 @@ namespace osu.Game.Tournament
             var lastScreen = currentScreen;
             currentScreen = target;
 
-            if (currentScreen.ChildrenOfType<TourneyVideo>().FirstOrDefault()?.VideoAvailable == true)
+            var currentScreenVideo = currentScreen.ChildrenOfType<TourneyVideo>().FirstOrDefault();
+
+            if (currentScreenVideo?.VideoAvailable == true)
             {
                 video.FadeOut(200);
 
                 // delay the hide to avoid a double-fade transition.
                 scheduledHide = Scheduler.AddDelayed(() => lastScreen?.Hide(), TournamentScreen.FADE_DELAY);
+
+                if (currentScreen is MapPoolScreen)
+                {
+                    // for this custom client we want to always start the video from the beginning when entering the map pool screen.
+                    currentScreenVideo.Reset();
+                }
             }
             else
             {
